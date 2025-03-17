@@ -1,11 +1,8 @@
-import { Box, Typography } from "@mui/material";
-
-export default function HomePage() {
+import HomePage from "./home-page/HomePage";
+export default function Home() {
   return (
-    <>
-      <Box>
-        <Typography>Test test 123</Typography>
-      </Box>
-    </>
-  )
+    <div>
+      <HomePage />
+    </div>
+  );
 }
