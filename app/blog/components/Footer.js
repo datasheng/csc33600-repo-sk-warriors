@@ -13,14 +13,13 @@ import FacebookIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/X';
 import SitemarkIcon from './SitemarkIcon';
-import { GitHub } from '@mui/icons-material';
 
 function Copyright() {
   return (
     <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
       {'Copyright © '}
       <Link color="text.secondary" href="https://mui.com/">
-        Smart Finder
+        Sitemark
       </Link>
       &nbsp;
       {new Date().getFullYear()}
@@ -113,10 +112,16 @@ export default function Footer() {
               Features
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
+              Testimonials
+            </Link>
+            <Link color="text.secondary" variant="body2" href="#">
               Highlights
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
               Pricing
+            </Link>
+            <Link color="text.secondary" variant="body2" href="#">
+              FAQs
             </Link>
           </Box>
           <Box
@@ -133,10 +138,10 @@ export default function Footer() {
               About us
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
-              Blog
+              Careers
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
-              FAQs
+              Press
             </Link>
           </Box>
           <Box
@@ -195,7 +200,25 @@ export default function Footer() {
               aria-label="GitHub"
               sx={{ alignSelf: 'center' }}
             >
-              <GitHub />
+              <FacebookIcon />
+            </IconButton>
+            <IconButton
+              color="inherit"
+              size="small"
+              href="https://x.com/MaterialUI"
+              aria-label="X"
+              sx={{ alignSelf: 'center' }}
+            >
+              <TwitterIcon />
+            </IconButton>
+            <IconButton
+              color="inherit"
+              size="small"
+              href="https://www.linkedin.com/company/mui/"
+              aria-label="LinkedIn"
+              sx={{ alignSelf: 'center' }}
+            >
+              <LinkedInIcon />
             </IconButton>
           </Stack>
         </Box>
