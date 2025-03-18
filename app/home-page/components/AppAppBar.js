@@ -14,6 +14,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ColorModeIconDropdown from '../../shared-theme/ColorModeIconDropdown';
 import Sitemark from './SitemarkIcon';
+import Link from 'next/link';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -66,9 +67,11 @@ export default function AppAppBar() {
               <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
                 FAQ
               </Button>
+              <Link href='/blog'>
               <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
                 Blog
               </Button>
+              </Link>
             </Box>
           </Box>
           <Box

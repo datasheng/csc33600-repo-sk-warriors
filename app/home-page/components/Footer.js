@@ -10,6 +10,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import FacebookIcon from '@mui/icons-material/GitHub';
 import SitemarkIcon from './SitemarkIcon';
+import { GitHub } from '@mui/icons-material';
 
 function Copyright() {
   return (
@@ -185,7 +186,7 @@ export default function Footer() {
             aria-label="GitHub"
             sx={{ alignSelf: 'center' }}
           >
-            <FacebookIcon />
+            <GitHub />
           </IconButton>
         </Stack>
       </Box>

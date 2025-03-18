@@ -1,3 +1,5 @@
+'use client'
+
 import * as React from 'react';
 import { alpha, styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -57,9 +59,6 @@ export default function AppAppBar() {
                 Features
               </Button>
               <Button variant="text" color="info" size="small">
-                Testimonials
-              </Button>
-              <Button variant="text" color="info" size="small">
                 Highlights
               </Button>
               <Button variant="text" color="info" size="small">
@@ -115,7 +114,6 @@ export default function AppAppBar() {
                   </IconButton>
                 </Box>
                 <MenuItem>Features</MenuItem>
-                <MenuItem>Testimonials</MenuItem>
                 <MenuItem>Highlights</MenuItem>
                 <MenuItem>Pricing</MenuItem>
                 <MenuItem>FAQ</MenuItem>
