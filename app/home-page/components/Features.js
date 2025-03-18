@@ -153,7 +153,7 @@ export default function Features() {
           gutterBottom
           sx={{ color: 'text.primary' }}
         >
-          Product features
+          Features
         </Typography>
         <Typography
           variant="body1"
