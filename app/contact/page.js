@@ -1,30 +1,37 @@
 "use client";
 
 import { Box, Typography, Button, Grid, TextField } from "@mui/material";
-
 import AppAppBar from "../home-page/components/AppAppBar";
 import Footer from "../home-page/components/Footer";
+import AppTheme from "../shared-theme/AppTheme";
 
 export default function Contact() {
   return (
-    <>
-      <AppAppBar></AppAppBar>
-      {/*Contact Form Section*/}
+    <AppTheme>
+      <AppAppBar />
       <Box
-        sx={{
+        id="contact-section"
+        sx={(theme) => ({
           minHeight: { xs: "100vh", sm: "100vh" },
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: { xs: "flex-start", sm: "center" },
-          background: "linear-gradient(270deg, #000000, #2838ae)",
+          width: "100%",
+          backgroundRepeat: "no-repeat",
+          backgroundImage:
+            "radial-gradient(ellipse 80% 50% at 50% -20%, hsl(210, 100%, 90%), transparent)",
+          ...theme.applyStyles("dark", {
+            backgroundImage:
+              "radial-gradient(ellipse 80% 50% at 50% -20%, hsl(210, 100%, 16%), transparent)",
+          }),
           overflow: "auto",
           padding: {
             xs: "20px 10px 40px",
             sm: "60px 20px",
           },
           pt: { xs: "150px", sm: "100px" },
-        }}
+        })}
       >
         <Box
           sx={{
@@ -78,7 +85,15 @@ export default function Contact() {
                 sx={{
                   backgroundColor: "white",
                   borderRadius: 1,
-                  "& .MuiInputLabel-root": { color: "black" },
+                  "& .MuiInputLabel-root": {
+                    color: "black",
+                  },
+                  "& .MuiFilledInput-input": {
+                    color: "#111",
+                  },
+                  "& .MuiInputBase-root": {
+                    backgroundColor: "white",
+                  },
                   opacity: 1,
                 }}
                 required
@@ -92,7 +107,15 @@ export default function Contact() {
                 sx={{
                   backgroundColor: "white",
                   borderRadius: 1,
-                  "& .MuiInputLabel-root": { color: "black" },
+                  "& .MuiInputLabel-root": {
+                    color: "black",
+                  },
+                  "& .MuiFilledInput-input": {
+                    color: "#111",
+                  },
+                  "& .MuiInputBase-root": {
+                    backgroundColor: "white",
+                  },
                   opacity: 1,
                 }}
               />
@@ -107,7 +130,15 @@ export default function Contact() {
               backgroundColor: "white",
               mt: 2,
               borderRadius: 1,
-              "& .MuiInputLabel-root": { color: "black" },
+              "& .MuiInputLabel-root": {
+                color: "black",
+              },
+              "& .MuiFilledInput-input": {
+                color: "#111",
+              },
+              "& .MuiInputBase-root": {
+                backgroundColor: "white",
+              },
               opacity: 1,
             }}
             required
@@ -124,7 +155,15 @@ export default function Contact() {
               backgroundColor: "white",
               mt: 2,
               borderRadius: 1,
-              "& .MuiInputLabel-root": { color: "black" },
+              "& .MuiInputLabel-root": {
+                color: "black",
+              },
+              "& .MuiFilledInput-input": {
+                color: "#111",
+              },
+              "& .MuiInputBase-root": {
+                backgroundColor: "white",
+              },
               opacity: 1,
             }}
             required
@@ -149,7 +188,7 @@ export default function Contact() {
           </Button>
         </Box>
       </Box>
-      <Footer></Footer>
-    </>
+      <Footer />
+    </AppTheme>
   );
 }
