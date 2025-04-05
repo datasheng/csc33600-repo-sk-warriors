@@ -8,7 +8,6 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import FacebookIcon from '@mui/icons-material/GitHub';
 import SitemarkIcon from './SitemarkIcon';
 import { GitHub } from '@mui/icons-material';
 
@@ -16,7 +15,7 @@ function Copyright() {
   return (
     <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
       {'Copyright © '}
-      <Link color="text.secondary" href="https://mui.com/">
+      <Link color="text.secondary" href="#">
         Smart Finder
       </Link>
       &nbsp;
@@ -104,9 +103,6 @@ export default function Footer() {
             Features
           </Link>
           <Link color="text.secondary" variant="body2" href="#">
-            Highlights
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
             Pricing
           </Link>
         </Box>
@@ -120,13 +116,10 @@ export default function Footer() {
           <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
             Company
           </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="/about-us">
             About Us
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Blog
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="/faqs">
             FAQs
           </Link>
         </Box>
@@ -140,13 +133,13 @@ export default function Footer() {
           <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
             Legal
           </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="/terms">
             Terms
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="/privacy">
             Privacy
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="/contact">
             Contact
           </Link>
         </Box>
@@ -162,13 +155,13 @@ export default function Footer() {
         }}
       >
         <div>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="/privacy">
             Privacy Policy
           </Link>
           <Typography sx={{ display: 'inline', mx: 0.5, opacity: 0.5 }}>
             &nbsp;•&nbsp;
           </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="/terms">
             Terms of Service
           </Link>
           <Copyright />
@@ -179,15 +172,6 @@ export default function Footer() {
           useFlexGap
           sx={{ justifyContent: 'left', color: 'text.secondary' }}
         >
-          <IconButton
-            color="inherit"
-            size="small"
-            href="https://github.com/mui"
-            aria-label="GitHub"
-            sx={{ alignSelf: 'center' }}
-          >
-            <GitHub />
-          </IconButton>
         </Stack>
       </Box>
     </Container>

@@ -96,7 +96,7 @@ export default function Hero() {
               width: { sm: '100%', md: '80%' },
             }}
           >
-            Short sentence about what we provide will go here. Preferrably 1-2 sentences.
+            Sandwich Perfection Awaits — Let Your Taste Buds Lead the Way.
           </Typography>
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
@@ -137,10 +137,10 @@ export default function Hero() {
             sx={{ textAlign: 'center' }}
           >
             By clicking &quot;Start now&quot; you agree to our&nbsp;
-            <Link href="#" color="primary">
+            <Link href="/terms-and-conditions" color="primary">
               Terms & Conditions
             </Link>
-            .
+            . And agree to join the waitlist.
           </Typography>
         </Stack>
         <StyledBox id="image" />
