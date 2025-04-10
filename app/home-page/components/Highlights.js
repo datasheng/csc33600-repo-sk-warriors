@@ -1,53 +1,54 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid2';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import AutoFixHighRoundedIcon from '@mui/icons-material/AutoFixHighRounded';
-import ConstructionRoundedIcon from '@mui/icons-material/ConstructionRounded';
-import QueryStatsRoundedIcon from '@mui/icons-material/QueryStatsRounded';
-import SettingsSuggestRoundedIcon from '@mui/icons-material/SettingsSuggestRounded';
-import SupportAgentRoundedIcon from '@mui/icons-material/SupportAgentRounded';
-import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid2";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import SupportAgentRoundedIcon from "@mui/icons-material/SupportAgentRounded";
+import MapIcon from '@mui/icons-material/Map';
+import StarIcon from '@mui/icons-material/Star';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+
 
 const items = [
   {
-    icon: <SettingsSuggestRoundedIcon />,
-    title: 'Adaptable performance',
+    icon: <MapIcon />,
+    title: "Live Map of Sandwich Spots",
     description:
-      'Our product effortlessly adjusts to your needs, boosting efficiency and simplifying your tasks.',
+      "Instantly view nearby bodegas and sandwich shops on an interactive, real-time map.",
   },
   {
-    icon: <ConstructionRoundedIcon />,
-    title: 'Built to last',
+    icon: <StarIcon />,
+    title: "User-Generated Reviews",
     description:
-      'Experience unmatched durability that goes above and beyond with lasting investment.',
+      "See what locals are saying with reviews and star ratings for each spot.",
   },
   {
-    icon: <ThumbUpAltRoundedIcon />,
-    title: 'Great user experience',
+    icon: <LocalOfferIcon />,
+    title: "Daily Deals & Specials",
     description:
-      'Integrate our product into your routine with an intuitive and easy-to-use interface.',
+      "Discover exclusive in-store deals and lunch specials at your neighborhood bodegas.",
   },
   {
-    icon: <AutoFixHighRoundedIcon />,
-    title: 'Innovative functionality',
+    icon: <PhotoLibraryIcon />,
+    title: "Photos from the Community",
     description:
-      'Stay ahead with features that set new standards, addressing your evolving needs better than the rest.',
+      "Scroll through real sandwich photos uploaded by hungry New Yorkers.",
+  },
+  {
+    icon: <BookmarkIcon />,
+    title: "Save Your Favorites",
+    description:
+      "Bookmark your go-to spots to come back to later.",
   },
   {
     icon: <SupportAgentRoundedIcon />,
-    title: 'Reliable support',
+    title: "Reliable Support",
     description:
-      'Count on our responsive customer support, offering assistance that goes beyond the purchase.',
-  },
-  {
-    icon: <QueryStatsRoundedIcon />,
-    title: 'Precision in every detail',
-    description:
-      'Enjoy a meticulously crafted product where small touches make a significant impact on your overall experience.',
+      "Count on a responsive customer support, offering assistance anytime.",
   },
 ];
 
@@ -58,30 +59,32 @@ export default function Highlights() {
       sx={{
         pt: { xs: 4, sm: 12 },
         pb: { xs: 8, sm: 16 },
-        color: 'white',
-        bgcolor: 'grey.900',
+        color: "white",
+        bgcolor: "grey.900",
       }}
     >
       <Container
         sx={{
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
           gap: { xs: 3, sm: 6 },
         }}
       >
         <Box
           sx={{
-            width: { sm: '100%', md: '60%' },
-            textAlign: { sm: 'left', md: 'center' },
+            width: { sm: "100%", md: "60%" },
+            textAlign: { sm: "left", md: "center" },
           }}
         >
           <Typography component="h2" variant="h4" gutterBottom>
             Highlights
           </Typography>
-          <Typography variant="body1" sx={{ color: 'grey.400' }}>
-            1-2 sentences again focusing on specific features, can dive a little more into detail here.
+          <Typography variant="body1" sx={{ color: "grey.400" }}>
+            Explore what sets our product apart — adaptability, durability,
+            intuitive design, and forward-thinking innovation. Enjoy dependable
+            customer support and precision-crafted quality in every detail.{" "}
           </Typography>
         </Box>
         <Grid container spacing={2}>
@@ -93,19 +96,19 @@ export default function Highlights() {
                 spacing={1}
                 useFlexGap
                 sx={{
-                  color: 'inherit',
+                  color: "inherit",
                   p: 3,
-                  height: '100%',
-                  borderColor: 'hsla(220, 25%, 25%, 0.3)',
-                  backgroundColor: 'grey.800',
+                  height: "100%",
+                  borderColor: "hsla(220, 25%, 25%, 0.3)",
+                  backgroundColor: "grey.800",
                 }}
               >
-                <Box sx={{ opacity: '50%' }}>{item.icon}</Box>
+                <Box sx={{ opacity: "50%" }}>{item.icon}</Box>
                 <div>
-                  <Typography gutterBottom sx={{ fontWeight: 'medium' }}>
+                  <Typography gutterBottom sx={{ fontWeight: "medium" }}>
                     {item.title}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'grey.400' }}>
+                  <Typography variant="body2" sx={{ color: "grey.400" }}>
                     {item.description}
                   </Typography>
                 </div>
