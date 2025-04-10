@@ -6,8 +6,8 @@ import AppTheme from "./shared-theme/AppTheme";
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata = {
-  title: "Price is Right",
-  description: "Blank for now",
+  title: "Smart Finder",
+  description: "Sandwich Perfection Awaits — Let Your Taste Buds Lead the Way."
 };
 
 export default function RootLayout({ children }) {
