@@ -62,6 +62,12 @@ export default function AppAppBar() {
                 </Button>
               </Link>
 
+              <Link href="https://mintlify.com/" target='_blank'>
+                <Button variant="text" color="info" size="small">
+                  Documentation
+                </Button>
+              </Link>
+
               <Link href="/pricing">
                 <Button variant="text" color="info" size="small">
                   Pricing
