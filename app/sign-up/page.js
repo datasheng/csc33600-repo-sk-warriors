@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -18,23 +18,26 @@ import AppAppBar from '../home-page/components/AppAppBar';
 import Footer from '../home-page/components/Footer';
 import GoogleIcon from '@mui/icons-material/Google';
 import MicrosoftIcon from '@mui/icons-material/Microsoft';
+import { useStackApp } from '@stackframe/stack';
 
 export default function SignUpPage() {
+  const app = useStackApp();
+
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [name, setName] = React.useState('');
+  const [formError, setFormError] = React.useState('');
 
   const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
-    const name = document.getElementById('name');
-
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
@@ -43,7 +46,7 @@ export default function SignUpPage() {
       setEmailErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
       isValid = false;
@@ -52,7 +55,7 @@ export default function SignUpPage() {
       setPasswordErrorMessage('');
     }
 
-    if (!name.value || name.value.length < 1) {
+    if (!name || name.length < 1) {
       setNameError(true);
       setNameErrorMessage('Name is required.');
       isValid = false;
@@ -64,18 +67,25 @@ export default function SignUpPage() {
     return isValid;
   };
 
-  const handleSubmit = (event) => {
-    if (nameError || emailError || passwordError) {
-      event.preventDefault();
-      return;
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!validateInputs()) return;
+
+    try {
+      const result = await app.signUpWithCredential({
+        email,
+        password,
+        attributes: { name }, // optional, if you want to store display name
+      });
+
+      if (result.status === 'error') {
+        setFormError(result.error.message || 'Something went wrong.');
+      }
+    } catch (err) {
+      console.error(err);
+      setFormError('An unexpected error occurred.');
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get('name'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-    });
   };
 
   return (
@@ -133,6 +143,13 @@ export default function SignUpPage() {
             >
               Sign Up
             </Typography>
+
+            {formError && (
+              <Typography color="error" fontWeight="bold" textAlign="center">
+                {formError}
+              </Typography>
+            )}
+
             <Box
               component="form"
               onSubmit={handleSubmit}
@@ -149,7 +166,8 @@ export default function SignUpPage() {
                   placeholder="Jon Snow"
                   error={nameError}
                   helperText={nameErrorMessage}
-                  color={nameError ? 'error' : 'primary'}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </FormControl>
               <FormControl>
@@ -164,7 +182,8 @@ export default function SignUpPage() {
                   variant="outlined"
                   error={emailError}
                   helperText={emailErrorMessage}
-                  color={emailError ? 'error' : 'primary'}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </FormControl>
               <FormControl>
@@ -180,30 +199,28 @@ export default function SignUpPage() {
                   variant="outlined"
                   error={passwordError}
                   helperText={passwordErrorMessage}
-                  color={passwordError ? 'error' : 'primary'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </FormControl>
               <FormControlLabel
                 control={<Checkbox value="allowExtraEmails" color="primary" />}
                 label="I want to receive updates via email."
               />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                onClick={validateInputs}
-              >
+              <Button type="submit" fullWidth variant="contained">
                 Sign up
               </Button>
             </Box>
+
             <Divider>
               <Typography sx={{ color: 'text.secondary' }}>or</Typography>
             </Divider>
+
             <Stack gap={2}>
               <Button
                 fullWidth
                 variant="outlined"
-                onClick={() => alert('Sign up with Google')}
+                onClick={() => app.signInWithOAuth('google')}
                 startIcon={<GoogleIcon />}
               >
                 Sign up with Google
@@ -211,7 +228,7 @@ export default function SignUpPage() {
               <Button
                 fullWidth
                 variant="outlined"
-                onClick={() => alert('Sign up with Microsoft')}
+                onClick={() => app.signInWithOAuth('microsoft')}
                 startIcon={<MicrosoftIcon />}
               >
                 Sign up with Microsoft
@@ -219,9 +236,9 @@ export default function SignUpPage() {
               <Typography sx={{ textAlign: 'center' }}>
                 Already have an account?{' '}
                 <Link
-                  href="/material-ui/getting-started/templates/sign-in/"
+                  href="/sign-in"
                   variant="body2"
-                  sx={{ alignSelf: 'center', color: "red", fontWeight: "bold"}}
+                  sx={{ alignSelf: 'center', color: 'red', fontWeight: 'bold' }}
                 >
                   Sign in here
                 </Link>

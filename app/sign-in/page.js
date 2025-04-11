@@ -7,6 +7,7 @@ import SignInCard from './components/SignInCard';
 import Content from './components/Content';
 import AppAppBar from '../home-page/components/AppAppBar';
 import Footer from '../home-page/components/Footer';
+import { SignIn } from '@stackframe/stack';
 
 export default function SignInSide() {
   return (
@@ -46,7 +47,7 @@ export default function SignInSide() {
           }}
         >
           <Content />
-          <SignInCard />
+          <SignIn></SignIn>
         </Stack>
       </Stack>
       <Footer></Footer>

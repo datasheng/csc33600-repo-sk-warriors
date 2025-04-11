@@ -1,4 +1,6 @@
 import { Inter } from "next/font/google";
+import { StackProvider, StackTheme } from "@stackframe/stack";
+import { stackServerApp } from "../stack";
 import "./globals.css";
 import AppTheme from "./shared-theme/AppTheme";
 
@@ -13,11 +15,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning className={inter.className}>
+      <body suppressHydrationWarning className={inter.className}><StackProvider app={stackServerApp}><StackTheme>
         <AppTheme>
           {children}
         </AppTheme>
-      </body>
+      </StackTheme></StackProvider></body>
     </html>
   );
 }
