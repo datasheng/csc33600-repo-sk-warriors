@@ -12,7 +12,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
+import GoogleIcon from '@mui/icons-material/Google';
+import MicrosoftIcon from '@mui/icons-material/Microsoft';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -89,14 +90,13 @@ export default function SignInCard() {
   return (
     <Card variant="outlined">
       <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-        <SitemarkIcon />
       </Box>
       <Typography
         component="h1"
         variant="h4"
         sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
       >
-        Sign in
+        Sign In
       </Typography>
       <Box
         component="form"
@@ -163,9 +163,9 @@ export default function SignInCard() {
             <Link
               href="/material-ui/getting-started/templates/sign-in/"
               variant="body2"
-              sx={{ alignSelf: 'center' }}
+              sx={{ alignSelf: 'center', color: "red", fontWeight: "bold" }}
             >
-              Sign up
+              Sign up here
             </Link>
           </span>
         </Typography>
@@ -183,10 +183,10 @@ export default function SignInCard() {
         <Button
           fullWidth
           variant="outlined"
-          onClick={() => alert('Sign in with Facebook')}
-          startIcon={<FacebookIcon />}
+          onClick={() => alert('Sign in with Microsoft')}
+          startIcon={<MicrosoftIcon />}
         >
-          Sign in with Facebook
+          Sign in with Microsoft
         </Button>
       </Box>
     </Card>
