@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Link from "next/link";
 
 export default function FAQ() {
   const [expanded, setExpanded] = React.useState([]);
@@ -63,7 +64,12 @@ export default function FAQ() {
               gutterBottom
               sx={{ maxWidth: { sm: "100%", md: "70%" } }}
             >
-              Answer goes here.
+              Smart Finder is a web based map cruising program for sandwiches!
+              Fire up the site and you&apos;ll be shown different deli&apos;s
+              and the sandwiches they offer; limited to a 1 mile radius. Get
+              access to prices, deals, reviews, photos and much more! Users are
+              able to rate, review, and upload photos of their favorite meal,
+              quick and simple.
             </Typography>
           </AccordionDetails>
         </Accordion>
@@ -86,7 +92,19 @@ export default function FAQ() {
               gutterBottom
               sx={{ maxWidth: { sm: "100%", md: "70%" } }}
             >
-              Answer goes here
+              There are two different ways to contact us. The first being
+              directly on our email smartfinder@gmail.com. Or you can fill out
+              the contact form{" "}
+              <Link
+                href="/contact"
+                style={{
+                  textDecoration: "none",
+                  fontWeight: "bold",
+                  color: "red",
+                }}
+              >
+                located here.
+              </Link>
             </Typography>
           </AccordionDetails>
         </Accordion>
@@ -109,7 +127,12 @@ export default function FAQ() {
               gutterBottom
               sx={{ maxWidth: { sm: "100%", md: "70%" } }}
             >
-              Answer goes here.
+              We don&apos;t focus on the big name stores. We support local
+              businesses. There are hundreds and thousands of deli&apos;s
+              located in NYC, and each one of them deserves to be featured;
+              showcasing their sandwiches and deals. Smart Finder is a map based
+              geolocator that allows you to see a variety of sandwiches from the
+              comfort of your device, no downloads needed.
             </Typography>
           </AccordionDetails>
         </Accordion>
@@ -133,7 +156,12 @@ export default function FAQ() {
               gutterBottom
               sx={{ maxWidth: { sm: "100%", md: "70%" } }}
             >
-              Answer goes here.
+              There are thousands of deli&apos;s located in NYC and that number
+              will likely continue to grow. We want to focus on local
+              businesses, so small deli&apos;s will always be our focus. In
+              terms of expansion, it&apos;s a question that will have to be left
+              open ended. We are proud of the stores that we have right now but
+              if the opportunity arises for us to expand, we will do it.
             </Typography>
           </AccordionDetails>
         </Accordion>
