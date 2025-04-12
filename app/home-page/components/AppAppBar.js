@@ -56,6 +56,13 @@ export default function AppAppBar() {
           >
             <Sitemark />
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
+
+              <Link href="/">
+                <Button variant="text" color="info" size="small">
+                  Home
+                </Button>
+              </Link>
+
               <Link href="/about-us">
                 <Button variant="text" color="info" size="small">
                   About Us

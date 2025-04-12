@@ -23,15 +23,15 @@ const tiers = [
   {
     title: "Plus",
     subheader: "Recommended",
-    price: "5",
+    price: "4",
     description: ["Entire View of NYC", "No Ads", "Promos from Deli"],
     buttonText: "Start now",
     buttonVariant: "contained",
     buttonColor: "secondary",
   },
   {
-    title: "Pro",
-    price: "10",
+    title: "Business",
+    price: "8",
     description: [
       "Entire view of nyc",
       "No Ads",
