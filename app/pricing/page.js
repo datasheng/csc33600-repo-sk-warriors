@@ -6,6 +6,7 @@ import Footer from "../home-page/components/Footer";
 import AppTheme from "../shared-theme/AppTheme";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import Link from "next/link";
 
 const tiers = [
   {
@@ -13,8 +14,10 @@ const tiers = [
     price: "0",
     description: [
       "Free Account Setup",
-      "1 mile view of the area",
-      "Rate and review deli",
+      "1 mile radius from users location",
+      "Upload 15 pictures a month",
+      "12 ratings a month",
+      "Limited Ads"
     ],
     buttonText: "Sign up for free",
     buttonVariant: "outlined",
@@ -24,7 +27,13 @@ const tiers = [
     title: "Plus",
     subheader: "Recommended",
     price: "4",
-    description: ["Entire View of NYC", "No Ads", "Promos from Deli"],
+    description: [
+      "10 mile radius view of from users location",
+      "Upload 30 pictures a month",
+      "30 ratings a month",
+      "Promotions from Deli's",
+      "No Ads",
+    ],
     buttonText: "Start now",
     buttonVariant: "contained",
     buttonColor: "secondary",
@@ -33,11 +42,11 @@ const tiers = [
     title: "Business",
     price: "8",
     description: [
-      "Entire view of nyc",
-      "No Ads",
-      "Promotions from deli",
+      "Entire view of NYC",
+      "Promotions from Deli's",
       "Add and remove deli listing upon approval",
-      "Priotized comments",
+      "Priotized comments and ratings",
+      "No Ads"
     ],
     buttonText: "Contact us",
     buttonVariant: "outlined",
@@ -52,12 +61,13 @@ export default function Pricing() {
       <Container
         id="pricing"
         sx={{
-          pt: { xs: 4, sm: 12 },
+          pt: { xs: 17, sm: 25 },
           pb: { xs: 8, sm: 16 },
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           gap: { xs: 3, sm: 6 },
+          textAlign: "center"
         }}
       >
         {/* Section Heading */}
