@@ -14,6 +14,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import Sitemark from "./SitemarkIcon";
 import Link from "next/link";
+import { useUser } from "@stackframe/stack";
+import Avatar from "@mui/material/Avatar";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
@@ -33,9 +35,15 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 export default function AppAppBar() {
   const [open, setOpen] = React.useState(false);
+  const user = useUser();
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
+  };
+
+  const handleSignOut = async () => {
+    await user?.signOut();
+    window.location.href = "/";
   };
 
   return (
@@ -56,7 +64,6 @@ export default function AppAppBar() {
           >
             <Sitemark />
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
-
               <Link href="/">
                 <Button variant="text" color="info" size="small">
                   Home
@@ -69,7 +76,7 @@ export default function AppAppBar() {
                 </Button>
               </Link>
 
-              <Link href="https://mintlify.com/" target='_blank'>
+              <Link href="https://mintlify.com/" target="_blank">
                 <Button variant="text" color="info" size="small">
                   Documentation
                 </Button>
@@ -100,17 +107,37 @@ export default function AppAppBar() {
               alignItems: "center",
             }}
           >
-            <Link href="/sign-in">
-              <Button color="primary" variant="text" size="small">
-                Sign in
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Avatar
+                  sx={{ width: 32, height: 32 }}
+                  src={user.photoUrl || undefined}
+                  alt={user.displayName || "User"}
+                />
+                <Button
+                  color="error"
+                  variant="outlined"
+                  size="small"
+                  onClick={handleSignOut}
+                >
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/sign-in">
+                  <Button color="primary" variant="text" size="small">
+                    Sign in
+                  </Button>
+                </Link>
 
-            <Link href="/sign-up">
-              <Button color="primary" variant="contained" size="small">
-                Sign up
-              </Button>
-            </Link>
+                <Link href="/sign-up">
+                  <Button color="primary" variant="contained" size="small">
+                    Sign up
+                  </Button>
+                </Link>
+              </>
+            )}
           </Box>
           <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
@@ -158,14 +185,38 @@ export default function AppAppBar() {
                 </Link>
                 <Divider sx={{ my: 3 }} />
 
-                <Link href="/sign-up">
-                  <MenuItem>
-                    <Button color="primary" variant="contained" fullWidth>
-                      Sign up
-                    </Button>
-                  </MenuItem>
-                </Link>
-
+                {user ? (
+                  <>
+                    <MenuItem sx={{ gap: 2 }}>
+                      <Avatar
+                        sx={{ width: 32, height: 32 }}
+                        src={user.photoUrl || undefined}
+                        alt={user.displayName || "User"}
+                      />
+                      <Box>{user.displayName || "My Account"}</Box>
+                    </MenuItem>
+                    <MenuItem>
+                      <Button
+                        color="error"
+                        variant="outlined"
+                        fullWidth
+                        onClick={handleSignOut}
+                      >
+                        Sign Out
+                      </Button>
+                    </MenuItem>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/sign-up">
+                      <MenuItem>
+                        <Button color="primary" variant="contained" fullWidth>
+                          Sign up
+                        </Button>
+                      </MenuItem>
+                    </Link>
+                  </>
+                )}
                 <Link href="/sign-in">
                   <MenuItem>
                     <Button color="primary" variant="outlined" fullWidth>
