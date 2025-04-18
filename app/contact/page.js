@@ -46,7 +46,6 @@ export default function Contact() {
             variant="h2"
             sx={{
               color: "white",
-              fontFamily: "Kanit, sans-serif",
               fontWeight: "900",
               fontSize: { xs: "2rem", sm: "3rem", md: "4rem" },
               textAlign: "center",
@@ -59,7 +58,6 @@ export default function Contact() {
             variant="caption"
             sx={{
               color: "white",
-              fontFamily: "Kanit, sans-serif",
               fontWeight: "900",
               textTransform: "uppercase",
               textAlign: "center",
@@ -173,14 +171,13 @@ export default function Contact() {
             variant="outlined"
             color="primary"
             sx={{
-              fontFamily: "Kanit, sans-serif",
               fontWeight: 900,
               color: "white",
               mt: 3,
               border: "1px solid primary",
               transition: "0.4s ease-in-out",
               "&:hover": {
-                border: "1px solid rgba(145, 83, 209, 1)",
+                border: "1px solid rgb(50, 18, 189)",
               },
             }}
           >
