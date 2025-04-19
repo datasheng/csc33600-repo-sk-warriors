@@ -10,6 +10,12 @@ import UnfoldMoreRoundedIcon from '@mui/icons-material/UnfoldMoreRounded';
 import { gray, brand } from '../themePrimitives';
 
 /* eslint-disable import/prefer-default-export */
+
+// ✅ Named forwardRef component to avoid ESLint error
+const SelectIcon = React.forwardRef(function SelectIcon(props, ref) {
+  return <UnfoldMoreRoundedIcon fontSize="small" {...props} ref={ref} />;
+});
+
 export const navigationCustomizations = {
   MuiMenuItem: {
     styleOverrides: {
@@ -58,9 +64,7 @@ export const navigationCustomizations = {
   },
   MuiSelect: {
     defaultProps: {
-      IconComponent: React.forwardRef((props, ref) => (
-        <UnfoldMoreRoundedIcon fontSize="small" {...props} ref={ref} />
-      )),
+      IconComponent: SelectIcon, // ✅ using the named component
     },
     styleOverrides: {
       root: ({ theme }) => ({
