@@ -91,7 +91,11 @@ CREATE TABLE Image (
     FOREIGN KEY (uploaded_by) REFERENCES User(user_id)
 );
 
-
-
-
-
+CREATE TABLE Contact_message (
+    message_id   BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    first_name   VARCHAR(100) NOT NULL,
+    last_name    VARCHAR(100),
+    email        VARCHAR(150) NOT NULL,
+    message      TEXT NOT NULL,
+    submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
