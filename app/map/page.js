@@ -20,6 +20,7 @@ export default function MapPage() {
   const isLoading = userState?.isLoading;
 
   const [userLocation, setUserLocation] = useState(null);
+  const [delis, setDelis] = useState([]); // 🍞 New state to hold deli data
   const mapRef = useRef(null);
 
   const { isLoaded, loadError } = useLoadScript({
@@ -27,12 +28,14 @@ export default function MapPage() {
     libraries,
   });
 
+  // Redirect if not logged in
   useEffect(() => {
     if (!isLoading && user === null) {
       router.push("/sign-in");
     }
   }, [isLoading, user, router]);
 
+  // Get user's geolocation
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -50,6 +53,22 @@ export default function MapPage() {
     } else {
       setUserLocation({ lat: 40.7128, lng: -74.006 });
     }
+  }, []);
+
+  // Fetch NYC deli data 🥪
+  useEffect(() => {
+    async function fetchDelis() {
+      try {
+        const res = await fetch(
+          "https://data.cityofnewyork.us/resource/ud4g-9x9z.json"
+        );
+        const data = await res.json();
+        setDelis(data);
+      } catch (error) {
+        console.error("Failed to fetch deli data:", error);
+      }
+    }
+    fetchDelis();
   }, []);
 
   if (loadError) return <p>Failed to load map.</p>;
@@ -92,6 +111,7 @@ export default function MapPage() {
           mapTypeId="roadmap"
           onLoad={(map) => (mapRef.current = map)}
         >
+          {/* User's own location marker */}
           <Marker
             position={userLocation}
             icon={{
@@ -100,6 +120,22 @@ export default function MapPage() {
               anchor: new window.google.maps.Point(32, 32),
             }}
           />
+
+          {/* Deli markers */}
+          {delis.map((deli, index) => {
+            if (!deli.latitude || !deli.longitude) return null; // skip if missing coords
+
+            return (
+              <Marker
+                key={index}
+                position={{
+                  lat: parseFloat(deli.latitude),
+                  lng: parseFloat(deli.longitude),
+                }}
+                title={deli.store_name}
+              />
+            );
+          })}
         </GoogleMap>
       </div>
     </>

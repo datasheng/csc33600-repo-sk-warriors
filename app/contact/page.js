@@ -1,11 +1,49 @@
 "use client";
 
+import { useState } from "react";
 import { Box, Typography, Button, Grid, TextField } from "@mui/material";
 import AppAppBar from "../home-page/components/AppAppBar";
 import Footer from "../home-page/components/Footer";
 import AppTheme from "../shared-theme/AppTheme";
 
 export default function Contact() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!firstName || !email || !message) {
+      setStatus("Please fill out all required fields.");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstName, lastName, email, message }),
+      });
+
+      if (res.ok) {
+        setStatus("Message sent successfully!");
+        // Clear form
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setMessage("");
+      } else {
+        setStatus("Failed to send message. Please try again.");
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus("An error occurred. Please try again later.");
+    }
+  };
+
   return (
     <AppTheme>
       <AppAppBar />
@@ -34,6 +72,8 @@ export default function Contact() {
         })}
       >
         <Box
+          component="form"
+          onSubmit={handleSubmit}
           sx={{
             background: "transparent",
             maxWidth: "1000px",
@@ -75,11 +115,14 @@ export default function Contact() {
           </Typography>
 
           <Grid container spacing={2}>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="First Name"
                 variant="filled"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
                 sx={{
                   backgroundColor: "white",
                   borderRadius: 1,
@@ -94,14 +137,15 @@ export default function Contact() {
                   },
                   opacity: 1,
                 }}
-                required
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Last Name"
                 variant="filled"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 sx={{
                   backgroundColor: "white",
                   borderRadius: 1,
@@ -124,6 +168,10 @@ export default function Contact() {
             fullWidth
             label="Email Address"
             variant="filled"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            type="email"
             sx={{
               backgroundColor: "white",
               mt: 2,
@@ -139,8 +187,6 @@ export default function Contact() {
               },
               opacity: 1,
             }}
-            required
-            type="email"
           />
 
           <TextField
@@ -149,6 +195,9 @@ export default function Contact() {
             variant="filled"
             multiline
             rows={6}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            required
             sx={{
               backgroundColor: "white",
               mt: 2,
@@ -164,12 +213,12 @@ export default function Contact() {
               },
               opacity: 1,
             }}
-            required
           />
 
           <Button
             variant="outlined"
             color="primary"
+            type="submit"
             sx={{
               fontWeight: 900,
               color: "white",
@@ -183,6 +232,15 @@ export default function Contact() {
           >
             Send Message
           </Button>
+
+          {status && (
+            <Typography
+              variant="body2"
+              sx={{ mt: 2, textAlign: "center", color: "white" }}
+            >
+              {status}
+            </Typography>
+          )}
         </Box>
       </Box>
       <Footer />

@@ -76,6 +76,12 @@ export default function AppAppBar() {
                 </Button>
               </Link>
 
+              <Link href="/chatbot">
+                <Button variant="text" color="info" size="small">
+                  ChronicleAI
+                </Button>
+              </Link>
+
               <Link href="https://mintlify.com/" target="_blank">
                 <Button variant="text" color="info" size="small">
                   Documentation
@@ -171,6 +177,14 @@ export default function AppAppBar() {
                 >
                   <MenuItem>About Us</MenuItem>
                 </Link>
+
+                <Link
+                  href="/chatbot"
+                  style={{ textDecoration: "none", color: "#fff" }}
+                >
+                  <MenuItem>ChronicleAI</MenuItem>
+                </Link>
+
                 <Link
                   href="/pricing"
                   style={{ textDecoration: "none", color: "#fff" }}

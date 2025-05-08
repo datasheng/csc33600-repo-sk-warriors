@@ -1,0 +1,2 @@
+API for Bodega's from NYC Open Data:
+- https://data.cityofnewyork.us/resource/ud4g-9x9z.json
