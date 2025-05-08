@@ -27,6 +27,7 @@ const tiers = [
     buttonText: "Sign up for free",
     buttonVariant: "outlined",
     buttonColor: "primary",
+    link: "/sign-up",
   },
   {
     title: "Plus",
@@ -42,6 +43,7 @@ const tiers = [
     buttonText: "Start now",
     buttonVariant: "contained",
     buttonColor: "secondary",
+    link: "/sign-up",
   },
   {
     title: "Business",
@@ -56,6 +58,7 @@ const tiers = [
     buttonText: "Contact us",
     buttonVariant: "outlined",
     buttonColor: "primary",
+    link: "/contact",
   },
 ];
 
@@ -205,6 +208,8 @@ export default function Pricing() {
                   fullWidth
                   variant={tier.buttonVariant}
                   color={tier.buttonColor}
+                  component="a"
+                  href={tier.link}
                 >
                   {tier.buttonText}
                 </Button>
