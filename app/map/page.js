@@ -5,13 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import { useUser } from "@stackframe/stack";
 import { useRouter } from "next/navigation";
 import AppAppBar from "../home-page/components/AppAppBar";
+import { Box, Button, Typography } from "@mui/material";
 
 const libraries = ["places"];
-
-const mapContainerStyle = {
-  width: "100%",
-  height: "100%",
-};
 
 export default function MapPage() {
   const router = useRouter();
@@ -20,7 +16,8 @@ export default function MapPage() {
   const isLoading = userState?.isLoading;
 
   const [userLocation, setUserLocation] = useState(null);
-  const [delis, setDelis] = useState([]); // 🍞 New state to hold deli data
+  const [delis, setDelis] = useState([]);
+  const [selectedDeli, setSelectedDeli] = useState(null);
   const mapRef = useRef(null);
 
   const { isLoaded, loadError } = useLoadScript({
@@ -28,14 +25,12 @@ export default function MapPage() {
     libraries,
   });
 
-  // Redirect if not logged in
   useEffect(() => {
     if (!isLoading && user === null) {
       router.push("/sign-in");
     }
   }, [isLoading, user, router]);
 
-  // Get user's geolocation
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -47,7 +42,7 @@ export default function MapPage() {
         },
         (error) => {
           console.error("Geolocation error:", error);
-          setUserLocation({ lat: 40.7128, lng: -74.006 });
+          setUserLocation({ lat: 40.7128, lng: -74.006 }); // fallback NYC
         }
       );
     } else {
@@ -55,13 +50,10 @@ export default function MapPage() {
     }
   }, []);
 
-  // Fetch NYC deli data 🥪
   useEffect(() => {
     async function fetchDelis() {
       try {
-        const res = await fetch(
-          "https://data.cityofnewyork.us/resource/ud4g-9x9z.json"
-        );
+        const res = await fetch("https://data.cityofnewyork.us/resource/ud4g-9x9z.json");
         const data = await res.json();
         setDelis(data);
       } catch (error) {
@@ -72,8 +64,7 @@ export default function MapPage() {
   }, []);
 
   if (loadError) return <p>Failed to load map.</p>;
-  if (isLoading || !isLoaded || userLocation === null)
-    return <p>Loading map</p>;
+  if (isLoading || !isLoaded || userLocation === null) return <p>Loading map...</p>;
   if (!isLoading && user === null) return null;
 
   const glowingDotSVG =
@@ -94,50 +85,92 @@ export default function MapPage() {
   return (
     <>
       <AppAppBar />
-      <div
-        style={{
-          width: "100vw",
-          height: "100vh",
-          backgroundColor: "#111",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          center={userLocation}
-          zoom={16}
-          mapTypeId="roadmap"
-          onLoad={(map) => (mapRef.current = map)}
-        >
-          {/* User's own location marker */}
-          <Marker
-            position={userLocation}
-            icon={{
-              url: glowingDotSVG,
-              scaledSize: new window.google.maps.Size(64, 64),
-              anchor: new window.google.maps.Point(32, 32),
-            }}
-          />
-
-          {/* Deli markers */}
-          {delis.map((deli, index) => {
-            if (!deli.latitude || !deli.longitude) return null; // skip if missing coords
-
-            return (
-              <Marker
-                key={index}
-                position={{
-                  lat: parseFloat(deli.latitude),
-                  lng: parseFloat(deli.longitude),
-                }}
-                title={deli.store_name}
+      <Box display="flex" width="100vw" height="100vh">
+        {/* Conditional sidebar */}
+        {selectedDeli && (
+          <Box
+            width="450px"
+            bgcolor="#f9f9f9"
+            p={2}
+            overflow="auto"
+            sx={{ color: "#111" }}
+          >
+            <Typography variant="h5" gutterBottom>
+              {selectedDeli.store_name || "Unnamed Deli"}
+            </Typography>
+            {selectedDeli.street_address && (
+              <Typography variant="body1">
+                <strong>Address:</strong> {selectedDeli.street_address}
+              </Typography>
+            )}
+            {selectedDeli.borough && (
+              <Typography variant="body1">
+                <strong>Borough:</strong> {selectedDeli.borough}
+              </Typography>
+            )}
+            {selectedDeli.zip_code && (
+              <Typography variant="body1">
+                <strong>Zip Code:</strong> {selectedDeli.zip_code}
+              </Typography>
+            )}
+            <Box mt={2} mb={2}>
+              <img
+                src="/placeholder-image.jpg"
+                alt="Deli"
+                style={{ width: "100%", borderRadius: "8px" }}
               />
-            );
-          })}
-        </GoogleMap>
-      </div>
+            </Box>
+            <Typography variant="body2">
+              <strong>Special Deals:</strong> Coming soon!
+            </Typography>
+            <Button
+              variant="contained"
+              sx={{ mt: 2 }}
+              onClick={() => setSelectedDeli(null)}
+            >
+              Close
+            </Button>
+          </Box>
+        )}
+
+        {/* Map always fills the rest */}
+        <Box flex={1}>
+          <GoogleMap
+            mapContainerStyle={{ width: "100%", height: "100%" }}
+            center={userLocation}
+            zoom={15}
+            mapTypeId="roadmap"
+            onLoad={(map) => (mapRef.current = map)}
+          >
+            {/* User marker */}
+            <Marker
+              position={userLocation}
+              icon={{
+                url: glowingDotSVG,
+                scaledSize: new window.google.maps.Size(64, 64),
+                anchor: new window.google.maps.Point(32, 32),
+              }}
+            />
+
+            {/* Deli markers */}
+            {delis.map((deli, index) => {
+              if (!deli.latitude || !deli.longitude) return null;
+
+              return (
+                <Marker
+                  key={index}
+                  position={{
+                    lat: parseFloat(deli.latitude),
+                    lng: parseFloat(deli.longitude),
+                  }}
+                  title={deli.store_name}
+                  onClick={() => setSelectedDeli(deli)}
+                />
+              );
+            })}
+          </GoogleMap>
+        </Box>
+      </Box>
     </>
   );
 }
