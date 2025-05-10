@@ -19,9 +19,11 @@ import Footer from '../home-page/components/Footer';
 import GoogleIcon from '@mui/icons-material/Google';
 import MicrosoftIcon from '@mui/icons-material/Microsoft';
 import { useStackApp } from '@stackframe/stack';
+import { useRouter } from 'next/navigation';
 
 export default function SignUpPage() {
   const app = useStackApp();
+  const router = useRouter();
 
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
@@ -73,15 +75,39 @@ export default function SignUpPage() {
     if (!validateInputs()) return;
 
     try {
+      //First, sign up with Stack Auth
       const result = await app.signUpWithCredential({
         email,
         password,
-        attributes: { name }, // optional, if you want to store display name
+        attributes: { name },
       });
 
       if (result.status === 'error') {
         setFormError(result.error.message || 'Something went wrong.');
+        return;
       }
+
+      //If Stack Auth signup is successful, send to MySQL
+      const mysqlResponse = await fetch('/api/register-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: email,
+          email,
+          password_hash: result.user.passwordHash
+        }),
+      });
+
+      const mysqlData = await mysqlResponse.json();
+
+      if (!mysqlData.success) {
+        console.error('MySQL registration failed:', mysqlData.error);
+        setFormError('Registration completed partially. Please contact support.');
+        return;
+      }
+      router.push('/dashboard');
     } catch (err) {
       console.error(err);
       setFormError('An unexpected error occurred.');
