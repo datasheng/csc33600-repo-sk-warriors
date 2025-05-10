@@ -115,11 +115,13 @@ export default function AppAppBar() {
           >
             {user ? (
               <>
-                <Avatar
-                  sx={{ width: 32, height: 32 }}
-                  src={user.photoUrl || undefined}
-                  alt={user.displayName || "User"}
-                />
+                <Link href="/profile" passHref>
+                  <Avatar
+                    sx={{ width: 32, height: 32, cursor: "pointer" }}
+                    src={user.photoUrl || undefined}
+                    alt={user.displayName || "User"}
+                  />
+                </Link>
                 <Button
                   color="error"
                   variant="outlined"

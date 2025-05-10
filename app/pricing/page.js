@@ -1,6 +1,18 @@
 "use client";
 
-import { Box, Typography, Button, Container, Card, CardContent, CardActions, Divider, Chip, Grid, TextField } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Container,
+  Card,
+  CardContent,
+  CardActions,
+  Divider,
+  Chip,
+  Grid,
+  TextField,
+} from "@mui/material";
 import AppAppBar from "../home-page/components/AppAppBar";
 import Footer from "../home-page/components/Footer";
 import AppTheme from "../shared-theme/AppTheme";
@@ -17,11 +29,12 @@ const tiers = [
       "1 mile radius from users location",
       "Upload 15 pictures a month",
       "12 ratings a month",
-      "Limited Ads"
+      "Limited Ads",
     ],
     buttonText: "Sign up for free",
     buttonVariant: "outlined",
     buttonColor: "primary",
+    link: "/sign-up",
   },
   {
     title: "Plus",
@@ -37,6 +50,7 @@ const tiers = [
     buttonText: "Start now",
     buttonVariant: "contained",
     buttonColor: "secondary",
+    link: "/sign-up",
   },
   {
     title: "Business",
@@ -46,11 +60,12 @@ const tiers = [
       "Promotions from Deli's",
       "Add and remove deli listing upon approval",
       "Priotized comments and ratings",
-      "No Ads"
+      "No Ads",
     ],
     buttonText: "Contact us",
     buttonVariant: "outlined",
     buttonColor: "primary",
+    link: "/contact",
   },
 ];
 
@@ -67,7 +82,7 @@ export default function Pricing() {
           flexDirection: "column",
           alignItems: "center",
           gap: { xs: 3, sm: 6 },
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
         {/* Section Heading */}
@@ -77,11 +92,17 @@ export default function Pricing() {
             textAlign: { sm: "left", md: "center" },
           }}
         >
-          <Typography component="h2" variant="h4" gutterBottom sx={{ color: "text.primary" }}>
+          <Typography
+            component="h2"
+            variant="h4"
+            gutterBottom
+            sx={{ color: "text.primary" }}
+          >
             Pricing
           </Typography>
           <Typography variant="body1" sx={{ color: "text.secondary" }}>
-            Come join our fast and friendly community, We have options for every need. <br />
+            Come join our fast and friendly community, We have options for every
+            need. <br />
             Choose from our 3 member options and enjoy!
           </Typography>
         </Box>
@@ -140,11 +161,18 @@ export default function Pricing() {
                       &nbsp; per month
                     </Typography>
                   </Box>
-                  <Divider sx={{ my: 2, opacity: 0.8, borderColor: "divider" }} />
+                  <Divider
+                    sx={{ my: 2, opacity: 0.8, borderColor: "divider" }}
+                  />
                   {tier.description.map((line, index) => (
                     <Box
                       key={index}
-                      sx={{ py: 1, display: "flex", gap: 1.5, alignItems: "center" }}
+                      sx={{
+                        py: 1,
+                        display: "flex",
+                        gap: 1.5,
+                        alignItems: "center",
+                      }}
                     >
                       <CheckCircleRoundedIcon
                         sx={{
@@ -165,7 +193,13 @@ export default function Pricing() {
                   ))}
                 </CardContent>
                 <CardActions>
-                  <Button fullWidth variant={tier.buttonVariant} color={tier.buttonColor}>
+                  <Button
+                    fullWidth
+                    variant={tier.buttonVariant}
+                    color={tier.buttonColor}
+                    component="a"
+                    href={tier.link}
+                  >
                     {tier.buttonText}
                   </Button>
                 </CardActions>
