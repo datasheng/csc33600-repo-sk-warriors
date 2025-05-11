@@ -5,12 +5,6 @@ import * as React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Stack from "@mui/material/Stack";
 import Content from "./components/Content";
-"use client";
-
-import * as React from "react";
-import CssBaseline from "@mui/material/CssBaseline";
-import Stack from "@mui/material/Stack";
-import Content from "./components/Content";
 import AppAppBar from "../home-page/components/AppAppBar";
 import Footer from "../home-page/components/Footer";
 import { SignIn, useUser, useStackApp } from "@stackframe/stack";
