@@ -1,4 +1,6 @@
 'use client'
+
+import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -37,6 +39,12 @@ const StyledBox = styled('div')(({ theme }) => ({
 }));
 
 export default function Hero() {
+  const router = useRouter();
+
+  const handleClickButton = () => {
+    router.push('/sign-up')
+  }
+
   return (
     <Box
       id="hero"
@@ -123,6 +131,7 @@ export default function Hero() {
               }}
             />
             <Button
+              onClick={handleClickButton}
               variant="contained"
               color="primary"
               size="small"
