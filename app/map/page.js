@@ -4,8 +4,20 @@ import { useLoadScript, GoogleMap, Marker } from "@react-google-maps/api";
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "@stackframe/stack";
 import { useRouter } from "next/navigation";
-import AppAppBar from "../home-page/components/AppAppBar";
-import { Box, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  SpeedDial,
+  SpeedDialIcon,
+  SpeedDialAction,
+} from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
+import InfoIcon from "@mui/icons-material/Info";
+import ContactMailIcon from "@mui/icons-material/ContactMail";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const libraries = ["places"];
 
@@ -42,7 +54,7 @@ export default function MapPage() {
         },
         (error) => {
           console.error("Geolocation error:", error);
-          setUserLocation({ lat: 40.7128, lng: -74.006 }); // fallback NYC
+          setUserLocation({ lat: 40.7128, lng: -74.006 });
         }
       );
     } else {
@@ -53,7 +65,9 @@ export default function MapPage() {
   useEffect(() => {
     async function fetchDelis() {
       try {
-        const res = await fetch("https://data.cityofnewyork.us/resource/ud4g-9x9z.json");
+        const res = await fetch(
+          "https://data.cityofnewyork.us/resource/ud4g-9x9z.json"
+        );
         const data = await res.json();
         setDelis(data);
       } catch (error) {
@@ -63,8 +77,43 @@ export default function MapPage() {
     fetchDelis();
   }, []);
 
+  const handleSignOut = async () => {
+    try {
+      await userState.signOut(); // stackframe sign-out
+      router.push("/sign-in");
+    } catch (err) {
+      console.error("Sign-out error:", err);
+    }
+  };
+
+  const actions = [
+    { icon: <HomeIcon />, name: "Home", onClick: () => router.push("/") },
+    { icon: <InfoIcon />, name: "About", onClick: () => router.push("/about") },
+    {
+      icon: <AttachMoneyIcon />,
+      name: "Pricing",
+      onClick: () => router.push("/pricing"),
+    },
+    {
+      icon: <ContactMailIcon />,
+      name: "Contact",
+      onClick: () => router.push("/contact"),
+    },
+    {
+      icon: <LoginIcon />,
+      name: "Sign In",
+      onClick: () => router.push("/sign-in"),
+    },
+    {
+      icon: <LogoutIcon color="error" />,
+      name: "Sign Out",
+      onClick: handleSignOut,
+    },
+  ];
+
   if (loadError) return <p>Failed to load map.</p>;
-  if (isLoading || !isLoaded || userLocation === null) return <p>Loading map...</p>;
+  if (isLoading || !isLoaded || userLocation === null)
+    return <p>Loading map...</p>;
   if (!isLoading && user === null) return null;
 
   const glowingDotSVG =
@@ -84,92 +133,114 @@ export default function MapPage() {
 
   return (
     <>
-      <AppAppBar />
-      <Box display="flex" width="100vw" height="100vh">
-        {/* Conditional sidebar */}
-        {selectedDeli && (
-          <Box
-            width="450px"
-            bgcolor="#f9f9f9"
-            p={2}
-            overflow="auto"
-            sx={{ color: "#111" }}
-          >
-            <Typography variant="h5" gutterBottom>
-              {selectedDeli.store_name || "Unnamed Deli"}
+      {/* Sidebar */}
+      {selectedDeli && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "450px",
+            height: "100vh",
+            bgcolor: "#f9f9f9",
+            p: 2,
+            overflow: "auto",
+            zIndex: 1300,
+            boxShadow: 3,
+            color: "#111",
+          }}
+        >
+          <Typography variant="h5" gutterBottom sx={{ color: "#111" }}>
+            {selectedDeli.store_name || "Unnamed Deli"}
+          </Typography>
+          {selectedDeli.street_address && (
+            <Typography variant="body1" sx={{ color: "#111" }}>
+              <strong>Address:</strong> {selectedDeli.street_address}
             </Typography>
-            {selectedDeli.street_address && (
-              <Typography variant="body1">
-                <strong>Address:</strong> {selectedDeli.street_address}
-              </Typography>
-            )}
-            {selectedDeli.borough && (
-              <Typography variant="body1">
-                <strong>Borough:</strong> {selectedDeli.borough}
-              </Typography>
-            )}
-            {selectedDeli.zip_code && (
-              <Typography variant="body1">
-                <strong>Zip Code:</strong> {selectedDeli.zip_code}
-              </Typography>
-            )}
-            <Box mt={2} mb={2}>
-              <img
-                src="/placeholder-image.jpg"
-                alt="Deli"
-                style={{ width: "100%", borderRadius: "8px" }}
-              />
-            </Box>
-            <Typography variant="body2">
-              <strong>Special Deals:</strong> Coming soon!
+          )}
+          {selectedDeli.borough && (
+            <Typography variant="body1" sx={{ color: "#111" }}>
+              <strong>Borough:</strong> {selectedDeli.borough}
             </Typography>
-            <Button
-              variant="contained"
-              sx={{ mt: 2 }}
-              onClick={() => setSelectedDeli(null)}
-            >
-              Close
-            </Button>
-          </Box>
-        )}
-
-        {/* Map always fills the rest */}
-        <Box flex={1}>
-          <GoogleMap
-            mapContainerStyle={{ width: "100%", height: "100%" }}
-            center={userLocation}
-            zoom={15}
-            mapTypeId="roadmap"
-            onLoad={(map) => (mapRef.current = map)}
-          >
-            {/* User marker */}
-            <Marker
-              position={userLocation}
-              icon={{
-                url: glowingDotSVG,
-                scaledSize: new window.google.maps.Size(64, 64),
-                anchor: new window.google.maps.Point(32, 32),
-              }}
+          )}
+          {selectedDeli.zip_code && (
+            <Typography variant="body1" sx={{ color: "#111" }}>
+              <strong>Zip Code:</strong> {selectedDeli.zip_code}
+            </Typography>
+          )}
+          <Box mt={2} mb={2}>
+            <img
+              src="/placeholder-image.jpg"
+              alt="Deli"
+              style={{ width: "100%", borderRadius: "8px" }}
             />
-
-            {/* Deli markers */}
-            {delis.map((deli, index) => {
-              if (!deli.latitude || !deli.longitude) return null;
-
-              return (
-                <Marker
-                  key={index}
-                  position={{
-                    lat: parseFloat(deli.latitude),
-                    lng: parseFloat(deli.longitude),
-                  }}
-                  title={deli.store_name}
-                  onClick={() => setSelectedDeli(deli)}
-                />
-              );
-            })}
-          </GoogleMap>
+          </Box>
+          <Typography variant="body2" sx={{ color: "#111" }}>
+            <strong>Special Deals:</strong> Coming soon!
+          </Typography>
+          <Button
+            variant="contained"
+            sx={{ mt: 2 }}
+            onClick={() => setSelectedDeli(null)}
+          >
+            Close
+          </Button>
         </Box>
+      )}
+
+      {/* Map */}
+      <Box sx={{ height: "100vh", width: "100vw" }}>
+        <GoogleMap
+          mapContainerStyle={{ width: "100%", height: "100%" }}
+          center={userLocation}
+          zoom={15}
+          mapTypeId="roadmap"
+          onLoad={(map) => (mapRef.current = map)}
+        >
+          {/* User marker */}
+          <Marker
+            position={userLocation}
+            icon={{
+              url: glowingDotSVG,
+              scaledSize: new window.google.maps.Size(64, 64),
+              anchor: new window.google.maps.Point(32, 32),
+            }}
+          />
+
+          {delis.map((deli, index) => {
+            if (!deli.latitude || !deli.longitude) return null;
+
+            return (
+              <Marker
+                key={index}
+                position={{
+                  lat: parseFloat(deli.latitude),
+                  lng: parseFloat(deli.longitude),
+                }}
+                title={deli.store_name}
+                onClick={() => setSelectedDeli(deli)}
+              />
+            );
+          })}
+        </GoogleMap>
+      </Box>
+
+      {/*this is the new appbar, its basically using mui speed dial component.*/}
+      <Box sx={{ position: "fixed", bottom: 16, right: 16, zIndex: 1400 }}>
+        <SpeedDial
+          ariaLabel="Site Navigation"
+          icon={<SpeedDialIcon />}
+          direction="left"
+        >
+          {actions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+              onClick={action.onClick}
+            />
+          ))}
+        </SpeedDial>
       </Box>
     </>
   );
