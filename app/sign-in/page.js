@@ -1,5 +1,12 @@
 "use client";
 
+import { useSearchParams } from "next/navigation"; 
+import * as React from "react";
+import CssBaseline from "@mui/material/CssBaseline";
+import Stack from "@mui/material/Stack";
+import Content from "./components/Content";
+"use client";
+
 import * as React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Stack from "@mui/material/Stack";
