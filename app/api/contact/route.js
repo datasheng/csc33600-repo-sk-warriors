@@ -20,7 +20,7 @@ export async function POST(req) {
 
     // Insert the contact message
     await db.execute(
-      `INSERT INTO Contact_message (first_name, last_name, email, message)
+      `INSERT INTO contact_message (first_name, last_name, email, message)
        VALUES (?, ?, ?, ?)`,
       [firstName, lastName, email, message]
     );
