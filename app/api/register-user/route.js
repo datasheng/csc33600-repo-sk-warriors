@@ -1,44 +1,55 @@
+export const runtime = 'nodejs';
+
 import { NextResponse } from 'next/server';
-import mysql from 'mysql2/promise';
+import pool from '@/db';
+
+const ADMIN_EMAILS = ['hamimc232@gmail.com']; // Add more admin emails as needed
 
 export async function POST(request) {
+  let connection;
   try {
-    const { username, email, password_hash } = await request.json();
-
-    // Create MySQL connection
-    const connection = await mysql.createConnection({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-    });
-
-    // Insert user into MySQL database
-    const [result] = await connection.execute(
-      'INSERT INTO User (username, email, password_hash) VALUES (?, ?, ?)',
-      [username, email, password_hash]
-    );
-
-    // Assign default 'regular' role to new user
-    const [roleResult] = await connection.execute(
-      'SELECT role_id FROM Role WHERE name = "regular"'
-    );
+    const { username, email, password_hash, auth_provider = 'email', display_name } = await request.json();
     
-    if (roleResult.length > 0) {
-      await connection.execute(
-        'INSERT INTO User_role (user_id, role_id) VALUES (?, ?)',
-        [result.insertId, roleResult[0].role_id]
-      );
-    }
+    // 1. Get a fresh connection
+    connection = await pool.getConnection();
+    
+    // 2. Start transaction EXPLICITLY
+    await connection.beginTransaction();
 
-    await connection.end();
+    // 3. Insert user (with error logging)
+    const [result] = await connection.query(
+      `INSERT INTO User (
+        username, 
+        email, 
+        password_hash, 
+        auth_provider, 
+        display_name
+      ) VALUES (?, ?, ?, ?, ?)`,
+      [
+        username,
+        email,
+        auth_provider === 'email' ? password_hash : null,
+        auth_provider,
+        display_name || username
+      ]
+    );
 
-    return NextResponse.json({ success: true, userId: result.insertId });
+    // 4. COMMIT explicitly
+    await connection.commit();
+    
+    console.log('Successfully inserted user:', email);
+    return NextResponse.json({ success: true });
+
   } catch (error) {
-    console.error('Database error:', error);
+    // 5. ROLLBACK on error
+    if (connection) await connection.rollback();
+    console.error('DATABASE ERROR:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
     );
+  } finally {
+    // 6. ALWAYS release connection
+    if (connection) connection.release();
   }
 }

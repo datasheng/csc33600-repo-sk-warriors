@@ -8,13 +8,17 @@ CREATE TABLE Role (
     name     ENUM('regular', 'plus', 'admin') NOT NULL UNIQUE
 );
 
+INSERT INTO Role (name) VALUES ('regular'), ('plus'), ('admin');
 
 CREATE TABLE User (
     user_id       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     username      VARCHAR(50)  NOT NULL UNIQUE,
     email         VARCHAR(100) NOT NULL UNIQUE,
-    password_hash CHAR(60)     NOT NULL,       
-    join_date     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
+    password_hash CHAR(60),       -- Can be NULL for OAuth users
+    auth_provider ENUM('email', 'google', 'microsoft', 'github') DEFAULT 'email',
+    display_name  VARCHAR(100),
+    last_active   DATETIME,
+    join_date     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE User_role (
@@ -22,7 +26,7 @@ CREATE TABLE User_role (
     role_id    TINYINT UNSIGNED NOT NULL,
     granted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, role_id),
-    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
     FOREIGN KEY (role_id) REFERENCES Role(role_id)
 );
 
