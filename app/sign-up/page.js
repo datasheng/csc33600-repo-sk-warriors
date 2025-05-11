@@ -243,14 +243,33 @@ export default function SignUpPage() {
             </Divider>
 
             <Stack gap={2}>
-              <Button
-                fullWidth
-                variant="outlined"
-                onClick={() => app.signInWithOAuth('google')}
-                startIcon={<GoogleIcon />}
-              >
-                Sign up with Google
-              </Button>
+            <Button
+  fullWidth
+  variant="outlined"
+  onClick={async () => {
+    try {
+      const result = await app.signInWithOAuth('google');
+      if (result.user) {
+        // Sync to MySQL after OAuth signup
+        await fetch('/api/register-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: result.user.email,
+            email: result.user.email,
+            password_hash: 'oauth_user' // Placeholder since no password
+          }),
+        });
+      }
+    } catch (err) {
+      console.error("OAuth signup failed:", err);
+    }
+  }}
+  startIcon={<GoogleIcon />}
+>
+  Sign up with Google
+</Button>
+
               <Button
                 fullWidth
                 variant="outlined"
