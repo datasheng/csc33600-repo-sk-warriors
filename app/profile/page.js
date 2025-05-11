@@ -15,6 +15,8 @@ import {
   Stack,
 } from "@mui/material";
 import AppTheme from "../shared-theme/AppTheme";
+import ProfileDetails from "./components/ProfileDetails";
+import SettingsPage from "./components/Settings";
 
 export default function ProfilePage() {
   const user = useUser();
@@ -27,6 +29,87 @@ export default function ProfilePage() {
     app.redirectToSignIn();
     return <p>Redirecting to sign-in...</p>;
   }
+
+
+  const renderSectionContent = () => {
+    switch (section) {
+      case "account-details":
+        return <ProfileDetails />;
+      case "settings":
+        return <SettingsPage />;
+
+      case "favorites":
+        return (
+          <Typography variant="body1">
+            Here's a list of all your favorites.
+          </Typography>
+        );
+      case "reviews":
+        return (
+          <Typography variant="body1">
+            Here's a list of all your reviews.
+          </Typography>
+        );
+      case "likes":
+        return (
+          <Typography variant="body1">
+            Here's a list of everything you've liked.
+          </Typography>
+        );
+      case "overview":
+      default:
+        return (
+          <Box
+            display="grid"
+            gridTemplateColumns="repeat(auto-fill, minmax(250px, 1fr))"
+            gap={2}
+          >
+            <Paper sx={{ p: 2 }}>
+              <Typography variant="h6">Favorites</Typography>
+              <Typography variant="body2">
+                See your favorite sandwiches.
+              </Typography>
+              <Button
+                variant="outlined"
+                sx={{ mt: 1 }}
+                component={Link}
+                href="/profile?section=favorites"
+              >
+                Go to Favorites
+              </Button>
+            </Paper>
+            <Paper sx={{ p: 2 }}>
+              <Typography variant="h6">Reviews</Typography>
+              <Typography variant="body2">
+                View your sandwich reviews.
+              </Typography>
+              <Button
+                variant="outlined"
+                sx={{ mt: 1 }}
+                component={Link}
+                href="/profile?section=reviews"
+              >
+                Go to Reviews
+              </Button>
+            </Paper>
+            <Paper sx={{ p: 2 }}>
+              <Typography variant="h6">Likes</Typography>
+              <Typography variant="body2">
+                Check out what you've liked.
+              </Typography>
+              <Button
+                variant="outlined"
+                sx={{ mt: 1 }}
+                component={Link}
+                href="/profile?section=likes"
+              >
+                Go to Likes
+              </Button>
+            </Paper>
+          </Box>
+        );
+    }
+  };
 
   return (
     <AppTheme>
@@ -65,10 +148,15 @@ export default function ProfilePage() {
               <ListItemButton
                 component={Link}
                 href="/profile?section=account-details"
+                selected={section === "account-details"}
               >
                 <ListItemText primary="Profile Details" />
               </ListItemButton>
-              <ListItemButton component={Link} href="/profile?section=settings">
+              <ListItemButton 
+                component={Link} 
+                href="/profile?section=settings"
+                selected={section === "settings"}
+              >
                 <ListItemText primary="Settings" />
               </ListItemButton>
             </List>
@@ -77,19 +165,26 @@ export default function ProfilePage() {
               Sandwich Spot
             </Typography>
             <List>
-              <ListItemButton component={Link} href="/profile?section=features">
-                <ListItemText primary="Features" />
-              </ListItemButton>
+              
               <ListItemButton
                 component={Link}
                 href="/profile?section=favorites"
+                selected={section === "favorites"}
               >
                 <ListItemText primary="Favorites" />
               </ListItemButton>
-              <ListItemButton component={Link} href="/profile?section=reviews">
+              <ListItemButton 
+                component={Link} 
+                href="/profile?section=reviews"
+                selected={section === "reviews"}
+              >
                 <ListItemText primary="Reviews" />
               </ListItemButton>
-              <ListItemButton component={Link} href="/profile?section=likes">
+              <ListItemButton 
+                component={Link} 
+                href="/profile?section=likes"
+                selected={section === "likes"}
+              >
                 <ListItemText primary="Likes" />
               </ListItemButton>
             </List>
@@ -131,99 +226,7 @@ export default function ProfilePage() {
                   .replace(/\b\w/g, (c) => c.toUpperCase())}
           </Typography>
 
-          {section === "overview" && (
-            <Box
-              display="grid"
-              gridTemplateColumns="repeat(auto-fill, minmax(250px, 1fr))"
-              gap={2}
-            >
-              <Paper sx={{ p: 2 }}>
-                <Typography variant="h6">Features</Typography>
-                <Typography variant="body2">
-                  Explore Sandwich Spot features here.
-                </Typography>
-                <Button
-                  variant="outlined"
-                  sx={{ mt: 1 }}
-                  component={Link}
-                  href="/profile?section=features"
-                >
-                  Go to Features
-                </Button>
-              </Paper>
-              <Paper sx={{ p: 2 }}>
-                <Typography variant="h6">Favorites</Typography>
-                <Typography variant="body2">
-                  See your favorite sandwiches.
-                </Typography>
-                <Button
-                  variant="outlined"
-                  sx={{ mt: 1 }}
-                  component={Link}
-                  href="/profile?section=favorites"
-                >
-                  Go to Favorites
-                </Button>
-              </Paper>
-              <Paper sx={{ p: 2 }}>
-                <Typography variant="h6">Reviews</Typography>
-                <Typography variant="body2">
-                  View your sandwich reviews.
-                </Typography>
-                <Button
-                  variant="outlined"
-                  sx={{ mt: 1 }}
-                  component={Link}
-                  href="/profile?section=reviews"
-                >
-                  Go to Reviews
-                </Button>
-              </Paper>
-              <Paper sx={{ p: 2 }}>
-                <Typography variant="h6">Likes</Typography>
-                <Typography variant="body2">
-                  Check out what you’ve liked.
-                </Typography>
-                <Button
-                  variant="outlined"
-                  sx={{ mt: 1 }}
-                  component={Link}
-                  href="/profile?section=likes"
-                >
-                  Go to Likes
-                </Button>
-              </Paper>
-            </Box>
-          )}
-
-          {section === "account-details" && (
-            <Typography variant="body1">
-              Here are your account details.
-            </Typography>
-          )}
-          {section === "settings" && (
-            <Typography variant="body1">Adjust your settings here.</Typography>
-          )}
-          {section === "features" && (
-            <Typography variant="body1">
-              Explore the full list of Sandwich Spot features.
-            </Typography>
-          )}
-          {section === "favorites" && (
-            <Typography variant="body1">
-              Here’s a list of all your favorites.
-            </Typography>
-          )}
-          {section === "reviews" && (
-            <Typography variant="body1">
-              Here’s a list of all your reviews.
-            </Typography>
-          )}
-          {section === "likes" && (
-            <Typography variant="body1">
-              Here’s a list of everything you’ve liked.
-            </Typography>
-          )}
+          {renderSectionContent()}
         </Box>
       </Box>
     </AppTheme>
