@@ -124,6 +124,13 @@ CREATE TABLE IF NOT EXISTS Payment (
     FOREIGN KEY (subscription_id) REFERENCES Subscription(subscription_id)
 );
 
+CREATE TABLE waitlist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    signup_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 -- Create and grant user
 CREATE USER IF NOT EXISTS 'team_user'@'%' IDENTIFIED BY 'SkWarriors23336';
 GRANT ALL PRIVILEGES ON smart_finder.* TO 'team_user'@'%';
