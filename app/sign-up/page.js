@@ -1,5 +1,6 @@
 "use client";
 
+console.log("[CLIENT] Rendering SignUpPage");
 import * as React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Stack from "@mui/material/Stack";
@@ -20,12 +21,13 @@ import GoogleIcon from "@mui/icons-material/Google";
 import MicrosoftIcon from "@mui/icons-material/Microsoft";
 import { useStackApp } from "@stackframe/stack";
 import { useRouter } from "next/navigation";
+import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function SignUpPage() {
   const app = useStackApp();
   const router = useRouter();
 
-  // Form state
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
@@ -33,17 +35,15 @@ export default function SignUpPage() {
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState("");
   const [formError, setFormError] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  // Form values
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [name, setName] = React.useState("");
 
-  // Validation function
   const validateInputs = () => {
     let isValid = true;
 
-    // Email validation
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage("Please enter a valid email address.");
@@ -53,7 +53,6 @@ export default function SignUpPage() {
       setEmailErrorMessage("");
     }
 
-    // Password validation
     if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage("Password must be at least 6 characters long.");
@@ -63,7 +62,6 @@ export default function SignUpPage() {
       setPasswordErrorMessage("");
     }
 
-    // Name validation
     if (!name || name.length < 1) {
       setNameError(true);
       setNameErrorMessage("Name is required.");
@@ -76,98 +74,86 @@ export default function SignUpPage() {
     return isValid;
   };
 
-  // Form submission handler
+  const registerInMySQL = async (userData) => {
+    console.log("[CLIENT] Registering user in MySQL:", userData);
+    const response = await fetch("/api/register-user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData),
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`MySQL registration failed: ${errorText}`);
+    }
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.error || "Database registration failed");
+    }
+    console.log("[CLIENT] MySQL registration successful");
+    return data;
+  };
+
   const handleSubmit = async (event) => {
+    console.log("[CLIENT] handleSubmit invoked");
     event.preventDefault();
     if (!validateInputs()) return;
 
+    setIsLoading(true);
+    setFormError("");
+
     try {
-      // 1) Sign up with Stack Auth (disable default redirect)
+      console.log("[CLIENT] Signing up with Stack Auth:", { email, name });
       const result = await app.signUpWithCredential(
         { email, password, attributes: { name } },
         { redirect: false }
       );
-
       if (result.status === "error") {
-        setFormError(
-          result.error.message || "Signup failed. Please try again."
-        );
-        return;
+        throw new Error(result.error?.message || "Stack Auth signup failed");
       }
 
-      // 2) Register in MySQL
-      console.log("[CLIENT] calling /api/register-user with", {
+      console.log("[CLIENT] Stack Auth signup successful:", result.user.id);
+
+      await registerInMySQL({
         username: email,
         email,
         password_hash: result.user.passwordHash,
         display_name: name,
+        auth_provider: "email",
       });
 
-      const mysqlResponse = await fetch("/api/register-user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: email,
-          email,
-          password_hash: result.user.passwordHash,
-          display_name: name,
-        }),
-      });
-
-      const mysqlData = await mysqlResponse.json();
-      if (!mysqlData.success) {
-        setFormError(mysqlData.error || "Database registration failed");
-        return;
-      }
-
-      // 3) Navigate only after both succeed
       router.push("/dashboard");
     } catch (err) {
-      console.error("Signup error:", err);
+      console.error("[CLIENT] Signup error:", err);
       setFormError(err.message || "An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // OAuth signup handler
   const handleOAuthSignup = async (provider) => {
+    setIsLoading(true);
+    setFormError("");
     try {
-      const result = await app.signInWithOAuth(provider);
+      console.log(`[CLIENT] Starting OAuth signup with ${provider}`);
+      const result = await app.signInWithOAuth(provider, { redirect: false });
       if (result.status === "error") {
-        throw new Error(result.error?.message || "OAuth signup failed");
+        throw new Error(result.error?.message || `${provider} OAuth failed`);
       }
-
-      console.log(
-        `[CLIENT] OAuth ${provider}, sending to /api/register-user:`,
-        {
-          username: result.user.email,
-          email: result.user.email,
-          display_name:
-            result.user.displayName || result.user.email.split("@")[0],
-          auth_provider: provider,
-        }
-      );
-
-      const resp = await fetch("/api/register-user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: result.user.email,
-          email: result.user.email,
-          display_name:
-            result.user.displayName || result.user.email.split("@")[0],
-          auth_provider: provider,
-        }),
+      console.log(`[CLIENT] ${provider} OAuth successful:`, result.user.email);
+      await registerInMySQL({
+        username: result.user.email,
+        email: result.user.email,
+        display_name:
+          result.user.displayName ||
+          result.user.email.split("@")[0],
+        auth_provider: provider.toLowerCase(),
       });
-
-      const data = await resp.json();
-      if (!data.success) {
-        throw new Error(data.error || "Database registration failed");
-      }
-
       router.push("/dashboard");
     } catch (err) {
-      console.error(`${provider} signup failed:`, err);
-      setFormError(`Failed to sign up with ${provider}. Please try again.`);
+      console.error(`[CLIENT] ${provider} signup failed:`, err);
+      setFormError(`Failed to sign up with ${provider}: ${err.message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -176,157 +162,147 @@ export default function SignUpPage() {
       <AppAppBar />
       <CssBaseline enableColorScheme />
       <Stack
-        direction="column"
         component="main"
+        direction="column"
         sx={{
           justifyContent: "center",
           height: "100vh",
-          minHeight: "100%",
-          position: "relative",
           background:
             "radial-gradient(circle at center, #03162B, #03172C, #051220)",
           color: "#fff",
+          position: "relative",
           "&::before": {
             content: '""',
-            display: "block",
             position: "absolute",
-            zIndex: -1,
             inset: 0,
+            zIndex: -1,
             backgroundImage:
-              "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
-            backgroundRepeat: "no-repeat",
-            fontFamily: "Kanit, sans-serif",
+              "radial-gradient(ellipse at 50% 50%, hsl(210,100%,97%),hsl(0,0%,100%))",
           },
         }}
       >
         <Stack
           direction="column"
-          sx={{
-            justifyContent: "center",
-            gap: { xs: 6, sm: 8 },
-            p: 2,
-            mx: "auto",
-            width: "100%",
-            maxWidth: 480,
-          }}
+          sx={{ maxWidth: 480, mx: "auto", p: 2, gap: { xs: 6, sm: 8 } }}
         >
           <Card
             variant="outlined"
             sx={{
+              p: 4,
               display: "flex",
               flexDirection: "column",
               gap: 3,
-              p: 4,
-              boxShadow:
-                "hsla(220, 30%, 5%, 0.2) 0px 5px 15px, hsla(220, 25%, 10%, 0.2) 0px 15px 35px -5px",
             }}
           >
-            <Typography
-              component="h1"
-              variant="h4"
-              sx={{ fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
-            >
+            <Typography component="h1" variant="h4">
               Sign Up
             </Typography>
 
             {formError && (
-              <Typography color="error" fontWeight="bold" textAlign="center">
+              <Alert severity="error" fullWidth>
                 {formError}
-              </Typography>
+              </Alert>
             )}
 
+            {/* ← HERE: Box is now a real <form> */}
             <Box
               component="form"
               onSubmit={handleSubmit}
+              noValidate
               sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             >
               <FormControl>
                 <FormLabel htmlFor="name">Full name</FormLabel>
                 <TextField
-                  autoComplete="name"
+                  id="name"
                   name="name"
                   required
                   fullWidth
-                  id="name"
                   placeholder="Jon Snow"
-                  error={nameError}
-                  helperText={nameErrorMessage}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  error={nameError}
+                  helperText={nameErrorMessage}
+                  disabled={isLoading}
                 />
               </FormControl>
+
               <FormControl>
                 <FormLabel htmlFor="email">Email</FormLabel>
                 <TextField
+                  id="email"
+                  name="email"
+                  type="email"
                   required
                   fullWidth
-                  id="email"
-                  placeholder="your@email.com"
-                  name="email"
-                  autoComplete="email"
-                  variant="outlined"
-                  error={emailError}
-                  helperText={emailErrorMessage}
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  error={emailError}
+                  helperText={emailErrorMessage}
+                  disabled={isLoading}
                 />
               </FormControl>
+
               <FormControl>
                 <FormLabel htmlFor="password">Password</FormLabel>
                 <TextField
+                  id="password"
+                  name="password"
+                  type="password"
                   required
                   fullWidth
-                  name="password"
                   placeholder="••••••"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                  variant="outlined"
-                  error={passwordError}
-                  helperText={passwordErrorMessage}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  error={passwordError}
+                  helperText={passwordErrorMessage}
+                  disabled={isLoading}
                 />
               </FormControl>
+
               <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
+                control={<Checkbox color="primary" />}
                 label="I want to receive updates via email."
+                disabled={isLoading}
               />
-              <Button type="submit" fullWidth variant="contained">
-                Sign up
+
+              <Button
+                type="submit"                  // ← submit button
+                fullWidth
+                variant="contained"
+                disabled={isLoading}
+              >
+                {isLoading ? <CircularProgress size={24} /> : "Sign up"}
               </Button>
             </Box>
 
-            <Divider>
-              <Typography sx={{ color: "text.secondary" }}>or</Typography>
-            </Divider>
+            <Divider>or</Divider>
 
             <Stack gap={2}>
               <Button
-                fullWidth
                 variant="outlined"
+                fullWidth
                 onClick={() => handleOAuthSignup("google")}
                 startIcon={<GoogleIcon />}
+                disabled={isLoading}
               >
                 Sign up with Google
               </Button>
 
               <Button
-                fullWidth
                 variant="outlined"
+                fullWidth
                 onClick={() => handleOAuthSignup("microsoft")}
                 startIcon={<MicrosoftIcon />}
+                disabled={isLoading}
               >
                 Sign up with Microsoft
               </Button>
 
-              <Typography sx={{ textAlign: "center" }}>
+              <Typography align="center">
                 Already have an account?{" "}
-                <Link
-                  href="/sign-in"
-                  variant="body2"
-                  sx={{ alignSelf: "center", color: "red", fontWeight: "bold" }}
-                >
+                <Link href="/sign-in" variant="body2">
                   Sign in here
                 </Link>
               </Typography>
