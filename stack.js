@@ -9,7 +9,7 @@ export const stackServerApp = new StackServerApp({
     publishableClientKey: process.env.NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY
   },
   urls: {
-    afterSignIn: "/map",
+    afterSignIn: "/profile",
     afterSignOut: "/"
   }
 });
