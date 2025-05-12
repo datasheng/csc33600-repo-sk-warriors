@@ -111,6 +111,20 @@ export default function AppAppBar() {
                   Contact
                 </Button>
               </Link>
+              
+              <Link href="/review">
+                <Button
+                  variant="text"
+                  color="info"
+                  size="small"
+                  sx={{ minWidth: 0 }}
+                   >
+                    Review
+                  </Button>
+                </Link>
+
+
+      
             </Box>
           </Box>
           <Box
