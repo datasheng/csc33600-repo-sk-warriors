@@ -81,6 +81,13 @@ export default function AppAppBar() {
                   ChronicleAI
                 </Button>
               </Link>
+              
+
+              <Link href="/remove">
+              <Button variant="text" color="info" size="small">
+                  Remove
+                </Button>
+              </Link>
 
               <Link href="https://mintlify.com/" target="_blank">
                 <Button variant="text" color="info" size="small">

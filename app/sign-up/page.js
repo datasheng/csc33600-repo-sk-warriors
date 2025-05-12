@@ -130,7 +130,6 @@ export default function SignUpPage() {
     }
   };
 
-  //oauth signup, like google, github, microsoft. thats what we have right now
   const handleOAuthSignup = async (provider) => {
     setIsLoading(true);
     setFormError('');
@@ -162,12 +161,15 @@ export default function SignUpPage() {
     <>
       <AppAppBar />
       <CssBaseline enableColorScheme />
-      <Stack
+      <Box
         component="main"
-        direction="column"
         sx={{
+          display: 'flex',
+          flexDirection: 'column',
           justifyContent: 'center',
-          height: '100vh',
+          alignItems: 'center',
+          minHeight: '100vh',
+          padding: { xs: 2, sm: 3 },
           position: 'relative',
           background: 'radial-gradient(circle at center, #03162B, #03172C, #051220)',
           color: '#fff',
@@ -181,14 +183,13 @@ export default function SignUpPage() {
           },
         }}
       >
-        <Stack
-          direction="column"
+        <Box
           sx={{
-            gap: { xs: 6, sm: 8 },
-            p: 2,
-            mx: 'auto',
             width: '100%',
             maxWidth: 480,
+            mx: 'auto',
+            mb: { xs: 4, sm: 6 },
+            mt: { xs: 4, sm: 6 },
           }}
         >
           <Card
@@ -196,17 +197,20 @@ export default function SignUpPage() {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              gap: 3,
-              p: 4,
+              gap: { xs: 2.5, sm: 3 },
+              p: { xs: 3, sm: 4 },
               boxShadow: 'hsla(220, 30%, 5%, 0.2) 0px 5px 15px, hsla(220, 25%, 10%, 0.2) 0px 15px 35px -5px',
             }}
           >
-            <Typography component="h1" variant="h4" sx={{ fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}>
+            <Typography component="h1" variant="h4" sx={{ 
+              fontSize: 'clamp(1.75rem, 5vw, 2.15rem)',
+              mb: 1
+            }}>
               Sign Up
             </Typography>
 
             {formError && (
-              <Alert severity="error" sx={{ width: '100%' }}>
+              <Alert severity="error" sx={{ width: '100%', mb: 1 }}>
                 {formError}
               </Alert>
             )}
@@ -215,10 +219,15 @@ export default function SignUpPage() {
               component="form"
               onSubmit={handleSubmit}
               noValidate
-              sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+              sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: { xs: 2, sm: 2.5 },
+                width: '100%'
+              }}
             >
-              <FormControl>
-                <FormLabel htmlFor="name">Full name</FormLabel>
+              <FormControl sx={{ width: '100%' }}>
+                <FormLabel htmlFor="name" sx={{ mb: 0.5 }}>Full name</FormLabel>
                 <TextField
                   id="name"
                   name="name"
@@ -230,11 +239,17 @@ export default function SignUpPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   disabled={isLoading}
+                  size="medium"
+                  sx={{ 
+                    '& .MuiOutlinedInput-root': {
+                      height: '56px'
+                    }
+                  }}
                 />
               </FormControl>
 
-              <FormControl>
-                <FormLabel htmlFor="email">Email</FormLabel>
+              <FormControl sx={{ width: '100%' }}>
+                <FormLabel htmlFor="email" sx={{ mb: 0.5 }}>Email</FormLabel>
                 <TextField
                   id="email"
                   name="email"
@@ -247,11 +262,17 @@ export default function SignUpPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
+                  size="medium"
+                  sx={{ 
+                    '& .MuiOutlinedInput-root': {
+                      height: '56px'
+                    }
+                  }}
                 />
               </FormControl>
 
-              <FormControl>
-                <FormLabel htmlFor="password">Password</FormLabel>
+              <FormControl sx={{ width: '100%' }}>
+                <FormLabel htmlFor="password" sx={{ mb: 0.5 }}>Password</FormLabel>
                 <TextField
                   id="password"
                   name="password"
@@ -264,12 +285,19 @@ export default function SignUpPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
+                  size="medium"
+                  sx={{ 
+                    '& .MuiOutlinedInput-root': {
+                      height: '56px'
+                    }
+                  }}
                 />
               </FormControl>
 
               <FormControlLabel
                 control={<Checkbox disabled={isLoading} />}
                 label="I want to receive updates via email."
+                sx={{ mt: 0.5 }}
               />
 
               <Button
@@ -277,22 +305,27 @@ export default function SignUpPage() {
                 fullWidth
                 variant="contained"
                 disabled={isLoading}
+                sx={{ 
+                  height: '48px',
+                  mt: 1
+                }}
               >
                 {isLoading ? <CircularProgress size={24} /> : 'Sign up'}
               </Button>
             </Box>
 
-            <Divider>
+            <Divider sx={{ my: { xs: 1, sm: 2 } }}>
               <Typography sx={{ color: 'text.secondary' }}>or</Typography>
             </Divider>
 
-            <Stack gap={2}>
+            <Stack gap={2} sx={{ width: '100%' }}>
               <Button
                 fullWidth
                 variant="outlined"
                 startIcon={<GoogleIcon />}
                 onClick={() => handleOAuthSignup('google')}
                 disabled={isLoading}
+                sx={{ height: '48px' }}
               >
                 Sign up with Google
               </Button>
@@ -303,11 +336,12 @@ export default function SignUpPage() {
                 startIcon={<MicrosoftIcon />}
                 onClick={() => handleOAuthSignup('microsoft')}
                 disabled={isLoading}
+                sx={{ height: '48px' }}
               >
                 Sign up with Microsoft
               </Button>
 
-              <Typography sx={{ textAlign: 'center' }}>
+              <Typography sx={{ textAlign: 'center', mt: 1 }}>
                 Already have an account?{' '}
                 <Link href="/sign-in" variant="body2" sx={{ fontWeight: 'bold' }}>
                   Sign in here
@@ -315,8 +349,8 @@ export default function SignUpPage() {
               </Typography>
             </Stack>
           </Card>
-        </Stack>
-      </Stack>
+        </Box>
+      </Box>
       <Footer />
     </>
   );

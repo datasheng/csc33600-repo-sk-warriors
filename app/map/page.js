@@ -11,6 +11,8 @@ import {
   SpeedDial,
   SpeedDialIcon,
   SpeedDialAction,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
@@ -18,6 +20,7 @@ import ContactMailIcon from "@mui/icons-material/ContactMail";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
+import RemoveIcon from '@mui/icons-material/Remove';
 
 const libraries = ["places"];
 
@@ -30,6 +33,8 @@ export default function MapPage() {
   const [userLocation, setUserLocation] = useState(null);
   const [delis, setDelis] = useState([]);
   const [selectedDeli, setSelectedDeli] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showError, setShowError] = useState(false);
   const mapRef = useRef(null);
 
   const { isLoaded, loadError } = useLoadScript({
@@ -53,11 +58,34 @@ export default function MapPage() {
           });
         },
         (error) => {
-          console.error("Geolocation error:", error);
+          // Handle geolocation errors gracefully
+          let errorMsg = "Unable to access your location";
+          
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              errorMsg = "Location access denied. Please enable location services in your browser settings.";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMsg = "Location information is unavailable.";
+              break;
+            case error.TIMEOUT:
+              errorMsg = "Location request timed out.";
+              break;
+            default:
+              errorMsg = "An unknown error occurred while getting your location.";
+          }
+          
+          console.log(errorMsg);
+          setErrorMessage(errorMsg);
+          setShowError(true);
+          
+          // Default to New York City
           setUserLocation({ lat: 40.7128, lng: -74.006 });
         }
       );
     } else {
+      setErrorMessage("Geolocation is not supported by this browser.");
+      setShowError(true);
       setUserLocation({ lat: 40.7128, lng: -74.006 });
     }
   }, []);
@@ -72,6 +100,8 @@ export default function MapPage() {
         setDelis(data);
       } catch (error) {
         console.error("Failed to fetch deli data:", error);
+        setErrorMessage("Failed to fetch deli data. Please try again later.");
+        setShowError(true);
       }
     }
     fetchDelis();
@@ -83,7 +113,13 @@ export default function MapPage() {
       router.push("/sign-in");
     } catch (err) {
       console.error("Sign-out error:", err);
+      setErrorMessage("Failed to sign out. Please try again.");
+      setShowError(true);
     }
+  };
+
+  const handleCloseError = () => {
+    setShowError(false);
   };
 
   const actions = [
@@ -109,11 +145,29 @@ export default function MapPage() {
       name: "Sign Out",
       onClick: handleSignOut,
     },
+    {
+      icon: <RemoveIcon />, 
+      name: "Remove", 
+      onClick: () => router.push("/remove-deli")
+    }
   ];
 
-  if (loadError) return <p>Failed to load map.</p>;
-  if (isLoading || !isLoaded || userLocation === null)
-    return <p>Loading map...</p>;
+  if (loadError) return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
+      <Typography variant="h5" color="error">Failed to load map</Typography>
+      <Typography variant="body1">Please check your internet connection and try again.</Typography>
+      <Button variant="contained" sx={{ mt: 2 }} onClick={() => window.location.reload()}>
+        Reload Page
+      </Button>
+    </Box>
+  );
+  
+  if (isLoading || !isLoaded || userLocation === null) return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Typography variant="h5">Loading map...</Typography>
+    </Box>
+  );
+  
   if (!isLoading && user === null) return null;
 
   const glowingDotSVG =
@@ -224,6 +278,18 @@ export default function MapPage() {
           })}
         </GoogleMap>
       </Box>
+
+      {/* Error Snackbar */}
+      <Snackbar 
+        open={showError} 
+        autoHideDuration={6000} 
+        onClose={handleCloseError}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseError} severity="warning" variant="filled">
+          {errorMessage}
+        </Alert>
+      </Snackbar>
 
       {/*this is the new appbar, its basically using mui speed dial component.*/}
       <Box sx={{ position: "fixed", bottom: 16, right: 16, zIndex: 1400 }}>
