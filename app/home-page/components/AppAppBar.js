@@ -81,10 +81,21 @@ export default function AppAppBar() {
                   ChronicleAI
                 </Button>
               </Link>
-              
+
+              <Link href="/add-price">
+                <Button variant="text" color="info" size="small">
+                  Add Price
+                </Button>
+              </Link>
+
+              <Link href="/deli-listing">
+                <Button variant="text" color="info" size="small">
+                  Add Delis
+                </Button>
+              </Link>
 
               <Link href="/remove">
-              <Button variant="text" color="info" size="small">
+                <Button variant="text" color="info" size="small">
                   Remove
                 </Button>
               </Link>
@@ -111,20 +122,17 @@ export default function AppAppBar() {
                   Contact
                 </Button>
               </Link>
-              
+
               <Link href="/review">
                 <Button
                   variant="text"
                   color="info"
                   size="small"
                   sx={{ minWidth: 0 }}
-                   >
-                    Review
-                  </Button>
-                </Link>
-
-
-      
+                >
+                  Review
+                </Button>
+              </Link>
             </Box>
           </Box>
           <Box
@@ -209,17 +217,33 @@ export default function AppAppBar() {
                 </Link>
 
                 <Link
+                  href="/add-price"
+                  style={{ textDecoration: "none", color: "#fff" }}
+                >
+                  <MenuItem>Add Price</MenuItem>
+                </Link>
+
+                <Link
+                  href="/deli-listing"
+                  style={{ textDecoration: "none", color: "#fff" }}
+                >
+                  <MenuItem>Add Delis</MenuItem>
+                </Link>
+
+                <Link
                   href="/pricing"
                   style={{ textDecoration: "none", color: "#fff" }}
                 >
                   <MenuItem>Pricing</MenuItem>
                 </Link>
+
                 <Link
                   href="/contact"
                   style={{ textDecoration: "none", color: "#fff" }}
                 >
                   <MenuItem>Contact</MenuItem>
                 </Link>
+
                 <Divider sx={{ my: 3 }} />
 
                 {user ? (
