@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS Image (
     FOREIGN KEY (uploaded_by) REFERENCES User(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS Contact_message (
+CREATE TABLE IF NOT EXISTS contact_message (
     message_id   BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     first_name   VARCHAR(100) NOT NULL,
     last_name    VARCHAR(100),
@@ -123,6 +123,13 @@ CREATE TABLE IF NOT EXISTS Payment (
     FOREIGN KEY (user_id) REFERENCES User(user_id),
     FOREIGN KEY (subscription_id) REFERENCES Subscription(subscription_id)
 );
+
+CREATE TABLE waitlist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    signup_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 -- Create and grant user
 CREATE USER IF NOT EXISTS 'team_user'@'%' IDENTIFIED BY 'SkWarriors23336';

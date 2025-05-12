@@ -16,7 +16,6 @@ import Sitemark from "./SitemarkIcon";
 import Link from "next/link";
 import { useUser } from "@stackframe/stack";
 import Avatar from "@mui/material/Avatar";
-import { useRouter } from "next/navigation";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
@@ -37,7 +36,6 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 export default function AppAppBar() {
   const [open, setOpen] = React.useState(false);
   const user = useUser();
-  const router = useRouter();
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -83,6 +81,13 @@ export default function AppAppBar() {
                   ChronicleAI
                 </Button>
               </Link>
+              
+
+              <Link href="/remove">
+              <Button variant="text" color="info" size="small">
+                  Remove
+                </Button>
+              </Link>
 
               <Link href="https://mintlify.com/" target="_blank">
                 <Button variant="text" color="info" size="small">
@@ -106,25 +111,20 @@ export default function AppAppBar() {
                   Contact
                 </Button>
               </Link>
+              
+              <Link href="/review">
+                <Button
+                  variant="text"
+                  color="info"
+                  size="small"
+                  sx={{ minWidth: 0 }}
+                   >
+                    Review
+                  </Button>
+                </Link>
 
-              <Link
-               href="/all-delis"
-               style={{ textDecoration: "none", color: "#fff" }}
-              >
-              <MenuItem>All Delis</MenuItem>
-              </Link>
 
-              {/* ✅ Add Deli button */}
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                sx={{ ml: 2 }}
-                onClick={() => router.push("/deli-listing")}
-              >
-                Add Deli
-              </Button>
-
+      
             </Box>
           </Box>
           <Box
@@ -214,26 +214,12 @@ export default function AppAppBar() {
                 >
                   <MenuItem>Pricing</MenuItem>
                 </Link>
-
                 <Link
                   href="/contact"
                   style={{ textDecoration: "none", color: "#fff" }}
                 >
                   <MenuItem>Contact</MenuItem>
                 </Link>
-
-                {/* ✅ Add Deli button in mobile menu */}
-                <Link
-                  href="/deli-listing"
-                  style={{ textDecoration: "none", color: "#fff" }}
-                >
-                  <MenuItem>
-                    <Button color="primary" variant="contained" fullWidth>
-                      Add Deli
-                    </Button>
-                  </MenuItem>
-                </Link>
-
                 <Divider sx={{ my: 3 }} />
 
                 {user ? (

@@ -20,15 +20,6 @@ export default function ChatPage() {
   const messagesEndRef = useRef(null);
   const textFieldRef = useRef(null);
 
-  // Auto-scroll to bottom when new messages arrive
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   const sendMessage = async () => {
     if (message.trim() === "" || isSending) return;
 
@@ -363,7 +354,7 @@ export default function ChatPage() {
               sx={{
                 height: "56px",
                 minWidth: "100px",
-                bgcolor: "#660708",
+                bgcolor: "#0D1A26",
                 fontWeight: "bold",
                 color: "#FFFFFF",
                 textShadow: "0px 1px 2px rgba(0,0,0,0.5)", // Add text shadow for better visibility

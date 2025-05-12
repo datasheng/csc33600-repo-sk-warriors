@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Typography, Container, Paper, Grid, Divider } from "@mui/material";
+import { Box, Typography, Container, Paper, Grid } from "@mui/material";
 import AppAppBar from "../home-page/components/AppAppBar";
 import Footer from "../home-page/components/Footer";
 import AppTheme from "../shared-theme/AppTheme";
@@ -46,7 +46,8 @@ export default function AboutUs() {
                 fontSize: { xs: "2.5rem", sm: "3.5rem", md: "4rem" },
                 color: "#FFFFFF",     
                 letterSpacing: "-0.5px",
-                mb: 2
+                mb: 2,
+                paddingTop: "30px"
               }}
             >
               About Us
@@ -106,7 +107,7 @@ export default function AboutUs() {
                 make it simple and transparent for New Yorkers to find quality
                 deli food without overpaying
               </span>
-              . Whether you're craving a classic bacon egg and cheese or a
+              . Whether you&apos;re craving a classic bacon egg and cheese or a
               stacked pastrami on rye, Smart Finder helps you locate nearby delis,
               view their menus, and compare prices—all in one place.
             </Typography>
@@ -123,8 +124,8 @@ export default function AboutUs() {
             >
               In a city where delis are on almost every block, finding the best spot at the
               right price can still feel like a challenge. Smart Finder was born
-              out of frustration and curiosity: "Why is this sandwich $4 here but
-              $7 a few blocks away?" We realized there wasn't a clear way to view
+              out of frustration and curiosity: &apos;Why is this sandwich $4 here but
+              $7 a few blocks away?&apos; We realized there wasn&apos;t a clear way to view
               and compare deli offerings in real-time—so we decided to build one.
             </Typography>
           </Paper>
@@ -255,7 +256,7 @@ export default function AboutUs() {
                 lineHeight: 1.7
               }}
             >
-              Whether you're a student on a budget, a deli enthusiast, or
+              Whether you&apos;re a student on a budget, a deli enthusiast, or
               just looking for your next lunch spot, Smart Finder is designed to
               save you time, money, and effort.
             </Typography>
