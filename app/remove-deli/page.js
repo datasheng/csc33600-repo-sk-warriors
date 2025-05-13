@@ -219,8 +219,8 @@ export default function RemoveDeli() {
   return (
     <AppTheme>
       <AppAppBar />
-      <Container
-        maxWidth="md"
+      <Box
+        id="contact-section"
         sx={(theme) => ({
           minHeight: { xs: "100vh", sm: "100vh" },
           display: "flex",
@@ -230,12 +230,11 @@ export default function RemoveDeli() {
           width: "100%",
           backgroundRepeat: "no-repeat",
           backgroundImage:
-            "radial-gradient(ellipse 80% 50% at 50% -20%, hsl(210, 100%, 90%), transparent)",
-          ...theme.applyStyles?.("dark", {
-            backgroundImage:
-              "radial-gradient(ellipse 80% 50% at 50% -20%, hsl(210, 100%, 16%), transparent)",
-          }),
+            theme.palette.mode === "dark"
+              ? "radial-gradient(ellipse 80% 50% at 50% -20%, hsl(210, 100%, 16%), transparent)"
+              : "radial-gradient(ellipse 80% 50% at 50% -20%, hsl(210, 100%, 90%), transparent)",
           overflow: "auto",
+          backgroundColor: theme.palette.background.default,
           padding: {
             xs: "20px 10px 40px",
             sm: "60px 20px",
@@ -243,7 +242,7 @@ export default function RemoveDeli() {
           pt: { xs: "150px", sm: "100px" },
         })}
       >
-        <Paper elevation={3} sx={{ p: 4 }}>
+        <Paper elevation={3} sx={{ p: 4, width: "100%", maxWidth: 720 }}>
           <Typography
             variant="h4"
             component="h1"
@@ -356,6 +355,12 @@ export default function RemoveDeli() {
                 },
                 "& .MuiFilledInput-root": {
                   backgroundColor: "#0C1017",
+                  "&:hover": {
+                    backgroundColor: "#1a1f27",
+                  },
+                  "&.Mui-focused": {
+                    backgroundColor: "#0C1017",
+                  },
                 },
               }}
             />
@@ -383,7 +388,7 @@ export default function RemoveDeli() {
             </Box>
           </Box>
 
-          {/* Debug information section */}
+          {/* Debug Info */}
           {process.env.NODE_ENV !== "production" && (
             <Box sx={{ mt: 4, p: 2, bgcolor: "#f5f5f5", borderRadius: 1 }}>
               <Typography variant="subtitle2" gutterBottom>
@@ -408,7 +413,7 @@ export default function RemoveDeli() {
             </Box>
           )}
         </Paper>
-      </Container>
+      </Box>
 
       {/* Notification snackbar */}
       <Snackbar
@@ -425,7 +430,7 @@ export default function RemoveDeli() {
           {notification.message}
         </Alert>
       </Snackbar>
-      <Footer/>
+      <Footer />
     </AppTheme>
   );
 }
