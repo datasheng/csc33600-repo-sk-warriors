@@ -82,24 +82,6 @@ export default function AppAppBar() {
                 </Button>
               </Link>
 
-              <Link href="/add-price">
-                <Button variant="text" color="info" size="small">
-                  Add Price
-                </Button>
-              </Link>
-
-              <Link href="/deli-listing">
-                <Button variant="text" color="info" size="small">
-                  Add Delis
-                </Button>
-              </Link>
-
-              <Link href="/remove">
-                <Button variant="text" color="info" size="small">
-                  Remove
-                </Button>
-              </Link>
-
               <Link href="https://mintlify.com/" target="_blank">
                 <Button variant="text" color="info" size="small">
                   Documentation
@@ -120,17 +102,6 @@ export default function AppAppBar() {
                   sx={{ minWidth: 0 }}
                 >
                   Contact
-                </Button>
-              </Link>
-
-              <Link href="/review">
-                <Button
-                  variant="text"
-                  color="info"
-                  size="small"
-                  sx={{ minWidth: 0 }}
-                >
-                  Review
                 </Button>
               </Link>
             </Box>
@@ -214,20 +185,6 @@ export default function AppAppBar() {
                   style={{ textDecoration: "none", color: "#fff" }}
                 >
                   <MenuItem>ChronicleAI</MenuItem>
-                </Link>
-
-                <Link
-                  href="/add-price"
-                  style={{ textDecoration: "none", color: "#fff" }}
-                >
-                  <MenuItem>Add Price</MenuItem>
-                </Link>
-
-                <Link
-                  href="/deli-listing"
-                  style={{ textDecoration: "none", color: "#fff" }}
-                >
-                  <MenuItem>Add Delis</MenuItem>
                 </Link>
 
                 <Link
