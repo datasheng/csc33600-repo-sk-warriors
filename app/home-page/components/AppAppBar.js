@@ -82,12 +82,6 @@ export default function AppAppBar() {
                 </Button>
               </Link>
 
-              <Link href="/map">
-                <Button variant="text" color="info" size="small">
-                  Map
-                </Button>
-              </Link>
-
               <Link href="https://mintlify.com/" target="_blank">
                 <Button variant="text" color="info" size="small">
                   Documentation
@@ -110,8 +104,6 @@ export default function AppAppBar() {
                   Contact
                 </Button>
               </Link>
-
-              
             </Box>
           </Box>
           <Box
@@ -193,20 +185,6 @@ export default function AppAppBar() {
                   style={{ textDecoration: "none", color: "#fff" }}
                 >
                   <MenuItem>ChronicleAI</MenuItem>
-                </Link>
-
-                <Link
-                  href="/add-price"
-                  style={{ textDecoration: "none", color: "#fff" }}
-                >
-                  <MenuItem>Add Price</MenuItem>
-                </Link>
-
-                <Link
-                  href="/deli-listing"
-                  style={{ textDecoration: "none", color: "#fff" }}
-                >
-                  <MenuItem>Add Delis</MenuItem>
                 </Link>
 
                 <Link
