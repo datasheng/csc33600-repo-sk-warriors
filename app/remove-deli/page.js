@@ -171,7 +171,7 @@ export default function RemoveDeli() {
         severity: "success",
       });
 
-      // Redirect after 3 seconds
+      // Redirect after 3 seconds 
       setTimeout(() => {
         router.push("/map");
       }, 3000);
