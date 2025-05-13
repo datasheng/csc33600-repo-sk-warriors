@@ -425,6 +425,7 @@ export default function RemoveDeli() {
           {notification.message}
         </Alert>
       </Snackbar>
+      <Footer/>
     </AppTheme>
   );
 }
