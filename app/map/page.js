@@ -31,6 +31,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import AddIcon from "@mui/icons-material/Add";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 const libraries = ["places"];
 
@@ -170,8 +171,16 @@ export default function MapPage() {
   };
 
   const actions = [
-    { icon: <HomeIcon />, name: "Home", onClick: () => router.push("/") },
-    { icon: <InfoIcon />, name: "About", onClick: () => router.push("/about") },
+    { 
+      icon: <HomeIcon />, 
+      name: "Home", 
+      onClick: () => router.push("/") 
+    },
+    {
+      icon: <AccountBoxIcon/>,
+      name: "Profile",
+      onClick: () => router.push("/profile")
+    },
     {
       icon: <LocalOfferIcon />,
       name: "Pricing",
