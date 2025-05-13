@@ -187,3 +187,24 @@ CREATE TABLE IF NOT EXISTS Advertisement (
     created_at   DATETIME     DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES User(user_id)
 );
+
+
+CREATE TABLE IF NOT EXISTS Wallet (
+    user_id     BIGINT UNSIGNED PRIMARY KEY,
+    balance     DECIMAL(12,2) NOT NULL DEFAULT 0,           
+    updated_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+                         ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES User(user_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS WalletTransaction (
+    tx_id       BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id     BIGINT UNSIGNED NOT NULL,
+    amount      DECIMAL(12,2) NOT NULL,                     
+    tx_type     ENUM('deposit','spend','refund') NOT NULL,
+    description VARCHAR(255),
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    INDEX(user_id)
+);

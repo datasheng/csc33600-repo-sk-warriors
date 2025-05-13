@@ -17,23 +17,23 @@ import {
 } from "@mui/material";
 
 const fetcher = (url) => fetch(url).then((r) => r.json());
-const demoUserId = "1"; // TODO: replace with real auth id or context
+const demoUserId = "1"; //Need to replace
+//potentially send link to admin then admin is the one who puts up the ad.
 
 export default function AdsDashboard() {
-  /* fetch my ads ─────────────────────────────────────────────────── */
+ 
   const { data: myAds, mutate } = useSWR(
     `/api/ads?owner=${demoUserId}`,
     fetcher
   );
 
-  /* form state ───────────────────────────────────────────────────── */
+
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState("");
   const [title, setTitle] = useState("");
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
 
-  /* handlers ─────────────────────────────────────────────────────── */
   const onFileChange = (e) => {
     const f = e.target.files[0];
     if (f) {
@@ -49,7 +49,7 @@ export default function AdsDashboard() {
     }
     setBusy(true);
 
-    /* 1. upload image */
+    
     const formData = new FormData();
     formData.append("image", file);
     const uploadRes = await fetch("/api/ads/upload", {
@@ -62,18 +62,18 @@ export default function AdsDashboard() {
     }
     const { url } = await uploadRes.json();
 
-    /* 2. create Advertisement row */
+    
     const res = await fetch("/api/ads", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-user-id": demoUserId, // replace once auth is wired
+        "x-user-id": demoUserId, 
       },
       body: JSON.stringify({
         title,
         image_url: url,
-        link_url: "",          // optional; leave blank for now
-        end_date: "",          // optional
+        link_url: "",        
+        end_date: "",         
       }),
     });
 
@@ -84,11 +84,10 @@ export default function AdsDashboard() {
       setFile(null);
       setPreview("");
       setTitle("");
-      mutate();               // refresh list
+      mutate();            
     }
   };
 
-  /* UI ───────────────────────────────────────────────────────────── */
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4" gutterBottom>

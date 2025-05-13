@@ -69,43 +69,43 @@ export default function AppAppBar() {
                   Home
                 </Button>
               </Link>
-
               <Link href="/about-us">
                 <Button variant="text" color="info" size="small">
                   About Us
                 </Button>
               </Link>
-
               <Link href="/chatbot">
                 <Button variant="text" color="info" size="small">
                   ChronicleAI
                 </Button>
               </Link>
-
               <Link href="https://mintlify.com/" target="_blank">
                 <Button variant="text" color="info" size="small">
                   Documentation
                 </Button>
               </Link>
-
               <Link href="/pricing">
                 <Button variant="text" color="info" size="small">
                   Pricing
                 </Button>
               </Link>
-
               <Link href="/contact">
-                <Button
-                  variant="text"
-                  color="info"
-                  size="small"
-                  sx={{ minWidth: 0 }}
-                >
+                <Button variant="text" color="info" size="small">
                   Contact
                 </Button>
               </Link>
+
+              {user && (
+                <Link href="/wallet">
+                  <Button variant="text" color="info" size="small">
+                    Wallet
+                  </Button>
+                </Link>
+              )}
             </Box>
           </Box>
+
+          {/* Desktop Avatar + Auth */}
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
@@ -138,7 +138,6 @@ export default function AppAppBar() {
                     Sign in
                   </Button>
                 </Link>
-
                 <Link href="/sign-up">
                   <Button color="primary" variant="contained" size="small">
                     Sign up
@@ -147,6 +146,8 @@ export default function AppAppBar() {
               </>
             )}
           </Box>
+
+          {/* Mobile Drawer Button */}
           <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
               <MenuIcon />
@@ -173,33 +174,24 @@ export default function AppAppBar() {
                   </IconButton>
                 </Box>
 
-                <Link
-                  href="/about-us"
-                  style={{ textDecoration: "none", color: "#fff" }}
-                >
+                <Link href="/about-us" style={{ textDecoration: "none" }}>
                   <MenuItem>About Us</MenuItem>
                 </Link>
-
-                <Link
-                  href="/chatbot"
-                  style={{ textDecoration: "none", color: "#fff" }}
-                >
+                <Link href="/chatbot" style={{ textDecoration: "none" }}>
                   <MenuItem>ChronicleAI</MenuItem>
                 </Link>
-
-                <Link
-                  href="/pricing"
-                  style={{ textDecoration: "none", color: "#fff" }}
-                >
+                <Link href="/pricing" style={{ textDecoration: "none" }}>
                   <MenuItem>Pricing</MenuItem>
                 </Link>
-
-                <Link
-                  href="/contact"
-                  style={{ textDecoration: "none", color: "#fff" }}
-                >
+                <Link href="/contact" style={{ textDecoration: "none" }}>
                   <MenuItem>Contact</MenuItem>
                 </Link>
+
+                {user && (
+                  <Link href="/wallet" style={{ textDecoration: "none" }}>
+                    <MenuItem>Wallet</MenuItem>
+                  </Link>
+                )}
 
                 <Divider sx={{ my: 3 }} />
 
@@ -233,15 +225,15 @@ export default function AppAppBar() {
                         </Button>
                       </MenuItem>
                     </Link>
+                    <Link href="/sign-in">
+                      <MenuItem>
+                        <Button color="primary" variant="outlined" fullWidth>
+                          Sign in
+                        </Button>
+                      </MenuItem>
+                    </Link>
                   </>
                 )}
-                <Link href="/sign-in">
-                  <MenuItem>
-                    <Button color="primary" variant="outlined" fullWidth>
-                      Sign in
-                    </Button>
-                  </MenuItem>
-                </Link>
               </Box>
             </Drawer>
           </Box>
