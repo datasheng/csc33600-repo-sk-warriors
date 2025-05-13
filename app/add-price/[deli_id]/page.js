@@ -6,6 +6,7 @@ import { Box, TextField, Button, Typography, Snackbar } from "@mui/material";
 import AppAppBar from "@/app/home-page/components/AppAppBar";
 import Footer from "@/app/home-page/components/Footer";
 import AppTheme from "@/app/shared-theme/AppTheme";
+import Link from "next/link";
 
 export default function AddPricePage() {
   const { deli_id } = useParams();
@@ -124,9 +125,16 @@ export default function AddPricePage() {
             variant="contained"
             disabled={busy}
             onClick={submit}
+            sx={{ marginBottom: "20px" }}
           >
             {busy ? "Submitting…" : "Submit Price"}
           </Button>
+
+          <Link href="/map" passHref>
+            <Button fullWidth variant="contained" component="a">
+              Back to Map
+            </Button>
+          </Link>
 
           <Snackbar
             open={!!toast}
@@ -136,7 +144,6 @@ export default function AddPricePage() {
           />
         </Box>
       </Box>
-
       <Footer />
     </AppTheme>
   );

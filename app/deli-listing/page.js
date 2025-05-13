@@ -4,6 +4,8 @@ import { Box, TextField, Button, Typography, Snackbar } from "@mui/material";
 import AppAppBar from "../home-page/components/AppAppBar";
 import Footer from "../home-page/components/Footer";
 import AppTheme from "../shared-theme/AppTheme";
+import Link from 'next/link';
+
 
 export default function AddDeliPage() {
   const [form, setForm] = useState({ name: "", address: "", phone: "" });
@@ -123,9 +125,16 @@ export default function AddDeliPage() {
             variant="contained"
             disabled={busy}
             onClick={submit}
+            sx={{ marginBottom: "20px" }}
           >
             {busy ? "Adding…" : "Add Deli"}
           </Button>
+
+          <Link href="/map" passHref>
+            <Button fullWidth variant="contained" component="a">
+              Back to Map
+            </Button>
+          </Link>
 
           <Snackbar
             open={!!toast}

@@ -190,6 +190,7 @@ export default function SignUpPage() {
             mx: 'auto',
             mb: { xs: 4, sm: 6 },
             mt: { xs: 4, sm: 6 },
+            paddingTop: "50px"
           }}
         >
           <Card

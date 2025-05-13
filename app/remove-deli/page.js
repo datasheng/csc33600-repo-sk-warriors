@@ -5,7 +5,6 @@ import { useUser } from "@stackframe/stack";
 import { useRouter } from "next/navigation";
 import {
   Box,
-  Container,
   Typography,
   TextField,
   Button,
@@ -18,10 +17,10 @@ import {
   Paper,
   Snackbar,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import AppAppBar from "../home-page/components/AppAppBar";
 import Footer from "../home-page/components/Footer";
 import AppTheme from "../shared-theme/AppTheme";
+import Link from "next/link";
 
 export default function RemoveDeli() {
   const router = useRouter();
@@ -171,7 +170,7 @@ export default function RemoveDeli() {
         severity: "success",
       });
 
-      // Redirect after 3 seconds 
+      // Redirect after 3 seconds
       setTimeout(() => {
         router.push("/map");
       }, 3000);
@@ -386,6 +385,17 @@ export default function RemoveDeli() {
                 )}
               </Button>
             </Box>
+
+            <Link href="/map" passHref>
+              <Button
+                fullWidth
+                variant="contained"
+                component="a"
+                sx={{ marginTop: "20px" }}
+              >
+                Back to Map
+              </Button>
+            </Link>
           </Box>
 
           {/* Debug Info */}
