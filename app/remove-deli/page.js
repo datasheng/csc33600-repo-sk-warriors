@@ -4,24 +4,24 @@ import { useState, useEffect } from "react";
 import { useUser } from "@stackframe/stack";
 import { useRouter } from "next/navigation";
 import {
-  Box, 
-  Container, 
-  Typography, 
-  TextField, 
-  Button, 
-  FormControl, 
-  InputLabel, 
-  Select, 
-  MenuItem, 
-  CircularProgress, 
-  Alert, 
-  Paper, 
-  Toolbar,
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  CircularProgress,
+  Alert,
+  Paper,
   Snackbar,
-  IconButton
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AppAppBar from "../home-page/components/AppAppBar";
+import Footer from "../home-page/components/Footer";
+import AppTheme from "../shared-theme/AppTheme";
 
 export default function RemoveDeli() {
   const router = useRouter();
@@ -40,14 +40,14 @@ export default function RemoveDeli() {
   const [notification, setNotification] = useState({
     open: false,
     message: "",
-    severity: "info"
+    severity: "info",
   });
 
   // This is fallback test data in case the API fails
   const testDelis = [
     { deli_id: 1, name: "Test Deli 1" },
     { deli_id: 2, name: "Test Deli 2" },
-    { deli_id: 3, name: "Test Deli 3" }
+    { deli_id: 3, name: "Test Deli 3" },
   ];
 
   useEffect(() => {
@@ -61,44 +61,49 @@ export default function RemoveDeli() {
       try {
         setFetchingDelis(true);
         setFetchStatus("fetching");
-        
+
         // Try fetching from our API
         const res = await fetch("/api/remove-deli");
         console.log("Fetch response status:", res.status);
-        
+
         if (!res.ok) {
           throw new Error(`Error fetching delis: ${res.status}`);
         }
-        
+
         const data = await res.json();
         console.log("Raw API response:", data);
-        
+
         if (Array.isArray(data) && data.length > 0) {
           // Process the data to ensure consistent property naming
-          const processedData = data.map(deli => ({
-            deli_id: deli.deli_id || deli.id || Math.random().toString(36).substr(2, 9),
-            name: deli.name || deli.store_name || "Unnamed Deli"
+          const processedData = data.map((deli) => ({
+            deli_id:
+              deli.deli_id ||
+              deli.id ||
+              Math.random().toString(36).substr(2, 9),
+            name: deli.name || deli.store_name || "Unnamed Deli",
           }));
-          
+
           setDelis(processedData);
           setFetchStatus("success");
-          
+
           // Show success notification
           setNotification({
             open: true,
             message: `Successfully loaded ${processedData.length} delis`,
-            severity: "success"
+            severity: "success",
           });
         } else {
-          console.warn("API returned empty or non-array data, using test delis");
+          console.warn(
+            "API returned empty or non-array data, using test delis"
+          );
           setDelis(testDelis);
           setFetchStatus("fallback");
-          
+
           // Show warning notification
           setNotification({
             open: true,
             message: "No delis found in API. Using test data instead.",
-            severity: "warning"
+            severity: "warning",
           });
         }
       } catch (error) {
@@ -106,18 +111,18 @@ export default function RemoveDeli() {
         setError("Failed to load delis. Using test data.");
         setDelis(testDelis); // Fallback to test data
         setFetchStatus("error");
-        
+
         // Show error notification
         setNotification({
           open: true,
           message: "Error loading delis. Using test data instead.",
-          severity: "error"
+          severity: "error",
         });
       } finally {
         setFetchingDelis(false);
       }
     }
-    
+
     if (user) {
       fetchDelis();
     }
@@ -125,7 +130,7 @@ export default function RemoveDeli() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!selectedDeli || !reason) {
       setError("Please select a deli and provide a reason.");
       return;
@@ -134,7 +139,7 @@ export default function RemoveDeli() {
     try {
       setIsSubmitting(true);
       setError("");
-      
+
       const response = await fetch("/api/remove-deli", {
         method: "POST",
         headers: {
@@ -143,41 +148,42 @@ export default function RemoveDeli() {
         body: JSON.stringify({
           deliId: selectedDeli,
           userId: user.id,
-          reason: reason
+          reason: reason,
         }),
       });
 
       const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error(responseData.message || "Failed to submit removal request");
+        throw new Error(
+          responseData.message || "Failed to submit removal request"
+        );
       }
 
       setSuccess(true);
       setSelectedDeli("");
       setReason("");
-      
+
       // Show success notification
       setNotification({
         open: true,
         message: "Your removal request has been submitted successfully!",
-        severity: "success"
+        severity: "success",
       });
-      
+
       // Redirect after 3 seconds
       setTimeout(() => {
         router.push("/map");
       }, 3000);
-      
     } catch (error) {
       console.error("Error submitting removal request:", error);
       setError(error.message || "An error occurred. Please try again.");
-      
+
       // Show error notification
       setNotification({
         open: true,
         message: error.message || "Failed to submit removal request",
-        severity: "error"
+        severity: "error",
       });
     } finally {
       setIsSubmitting(false);
@@ -185,15 +191,22 @@ export default function RemoveDeli() {
   };
 
   const handleCloseNotification = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
-    setNotification(prev => ({ ...prev, open: false }));
+    setNotification((prev) => ({ ...prev, open: false }));
   };
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -204,18 +217,46 @@ export default function RemoveDeli() {
   }
 
   return (
-    <>
+    <AppTheme>
       <AppAppBar />
-      <Toolbar />
-      <Container maxWidth="md" sx={{ mt:4, mb: 4 }}>
+      <Container
+        maxWidth="md"
+        sx={(theme) => ({
+          minHeight: { xs: "100vh", sm: "100vh" },
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: { xs: "flex-start", sm: "center" },
+          width: "100%",
+          backgroundRepeat: "no-repeat",
+          backgroundImage:
+            "radial-gradient(ellipse 80% 50% at 50% -20%, hsl(210, 100%, 90%), transparent)",
+          ...theme.applyStyles?.("dark", {
+            backgroundImage:
+              "radial-gradient(ellipse 80% 50% at 50% -20%, hsl(210, 100%, 16%), transparent)",
+          }),
+          overflow: "auto",
+          padding: {
+            xs: "20px 10px 40px",
+            sm: "60px 20px",
+          },
+          pt: { xs: "150px", sm: "100px" },
+        })}
+      >
         <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            sx={{ textAlign: "center" }}
+          >
             Report a Deli for Removal
           </Typography>
-          
+
           <Typography variant="body1" paragraph>
-            If you believe a deli listing should be removed from our platform, please fill out this form.
-            Our team will review your request and take appropriate action.
+            If you believe a deli listing should be removed from our platform,
+            please fill out this form. Our team will review your request and
+            take appropriate action.
           </Typography>
 
           {fetchStatus === "error" && (
@@ -232,7 +273,8 @@ export default function RemoveDeli() {
 
           {success && (
             <Alert severity="success" sx={{ mb: 3 }}>
-              Your removal request has been submitted successfully! You will be redirected shortly.
+              Your removal request has been submitted successfully! You will be
+              redirected shortly.
             </Alert>
           )}
 
@@ -242,9 +284,16 @@ export default function RemoveDeli() {
             </Alert>
           )}
 
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
+          >
             <FormControl fullWidth sx={{ mb: 3 }}>
-              <InputLabel id="deli-select-label">Select Deli</InputLabel>
+              <InputLabel id="deli-select-label" sx={{ color: "white" }}>
+                Select Deli
+              </InputLabel>
               <Select
                 labelId="deli-select-label"
                 id="deli-select"
@@ -255,12 +304,19 @@ export default function RemoveDeli() {
                   setSelectedDeli(e.target.value);
                 }}
                 disabled={fetchingDelis || isSubmitting}
+                sx={{
+                  color: "white",
+                  paddingY: 3,
+                  ".MuiSelect-icon": {
+                    color: "white",
+                  },
+                }}
                 MenuProps={{
                   PaperProps: {
                     style: {
-                      maxHeight: 300
-                    }
-                  }
+                      maxHeight: 300,
+                    },
+                  },
                 }}
               >
                 {fetchingDelis ? (
@@ -283,19 +339,28 @@ export default function RemoveDeli() {
 
             <TextField
               fullWidth
-              id="reason"
-              label="Reason for Removal"
-              name="reason"
+              label="Message goes here"
+              variant="filled"
               multiline
-              rows={4}
+              rows={6}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              disabled={isSubmitting}
               required
-              sx={{ mb: 3 }}
+              sx={{
+                mb: 3,
+                "& .MuiInputLabel-root": {
+                  color: "#fff",
+                },
+                "& .MuiFilledInput-input": {
+                  color: "#fff",
+                },
+                "& .MuiFilledInput-root": {
+                  backgroundColor: "#0C1017",
+                },
+              }}
             />
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Button
                 variant="outlined"
                 onClick={() => router.push("/map")}
@@ -309,35 +374,57 @@ export default function RemoveDeli() {
                 color="secondary"
                 disabled={isSubmitting || !selectedDeli || !reason}
               >
-                {isSubmitting ? <CircularProgress size={24} /> : "Submit Request"}
+                {isSubmitting ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  "Submit Request"
+                )}
               </Button>
             </Box>
           </Box>
 
           {/* Debug information section */}
-          {process.env.NODE_ENV !== 'production' && (
-            <Box sx={{ mt: 4, p: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
-              <Typography variant="subtitle2" gutterBottom>Debug Info:</Typography>
-              <Typography variant="body2">Fetch Status: {fetchStatus}</Typography>
-              <Typography variant="body2">Delis Count: {delis ? delis.length : 0}</Typography>
-              <Typography variant="body2">Selected Deli ID: {selectedDeli || 'None'}</Typography>
-              <Typography variant="body2">First few delis: {delis.slice(0, 3).map(d => d.name).join(', ')}</Typography>
+          {process.env.NODE_ENV !== "production" && (
+            <Box sx={{ mt: 4, p: 2, bgcolor: "#f5f5f5", borderRadius: 1 }}>
+              <Typography variant="subtitle2" gutterBottom>
+                Debug Info:
+              </Typography>
+              <Typography variant="body2">
+                Fetch Status: {fetchStatus}
+              </Typography>
+              <Typography variant="body2">
+                Delis Count: {delis ? delis.length : 0}
+              </Typography>
+              <Typography variant="body2">
+                Selected Deli ID: {selectedDeli || "None"}
+              </Typography>
+              <Typography variant="body2">
+                First few delis:{" "}
+                {delis
+                  .slice(0, 3)
+                  .map((d) => d.name)
+                  .join(", ")}
+              </Typography>
             </Box>
           )}
         </Paper>
       </Container>
-      
+
       {/* Notification snackbar */}
       <Snackbar
         open={notification.open}
         autoHideDuration={6000}
         onClose={handleCloseNotification}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert onClose={handleCloseNotification} severity={notification.severity} variant="filled">
+        <Alert
+          onClose={handleCloseNotification}
+          severity={notification.severity}
+          variant="filled"
+        >
           {notification.message}
         </Alert>
       </Snackbar>
-    </>
+    </AppTheme>
   );
 }
