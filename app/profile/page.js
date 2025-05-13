@@ -30,7 +30,6 @@ export default function ProfilePage() {
     return <p>Redirecting to sign-in...</p>;
   }
 
-
   const renderSectionContent = () => {
     switch (section) {
       case "account-details":
@@ -41,19 +40,19 @@ export default function ProfilePage() {
       case "favorites":
         return (
           <Typography variant="body1">
-            Here's a list of all your favorites.
+            Here&apos;s a list of all your favorites.
           </Typography>
         );
       case "reviews":
         return (
           <Typography variant="body1">
-            Here's a list of all your reviews.
+            Here&apos;s a list of all your reviews.
           </Typography>
         );
       case "likes":
         return (
           <Typography variant="body1">
-            Here's a list of everything you've liked.
+            Here&apos;s a list of everything you&apos;ve liked.
           </Typography>
         );
       case "overview":
@@ -95,7 +94,7 @@ export default function ProfilePage() {
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6">Likes</Typography>
               <Typography variant="body2">
-                Check out what you've liked.
+                Check out what you&apos;ve liked.
               </Typography>
               <Button
                 variant="outlined"
@@ -152,8 +151,8 @@ export default function ProfilePage() {
               >
                 <ListItemText primary="Profile Details" />
               </ListItemButton>
-              <ListItemButton 
-                component={Link} 
+              <ListItemButton
+                component={Link}
                 href="/profile?section=settings"
                 selected={section === "settings"}
               >
@@ -165,7 +164,6 @@ export default function ProfilePage() {
               Sandwich Spot
             </Typography>
             <List>
-              
               <ListItemButton
                 component={Link}
                 href="/profile?section=favorites"
@@ -173,15 +171,15 @@ export default function ProfilePage() {
               >
                 <ListItemText primary="Favorites" />
               </ListItemButton>
-              <ListItemButton 
-                component={Link} 
+              <ListItemButton
+                component={Link}
                 href="/profile?section=reviews"
                 selected={section === "reviews"}
               >
                 <ListItemText primary="Reviews" />
               </ListItemButton>
-              <ListItemButton 
-                component={Link} 
+              <ListItemButton
+                component={Link}
                 href="/profile?section=likes"
                 selected={section === "likes"}
               >
