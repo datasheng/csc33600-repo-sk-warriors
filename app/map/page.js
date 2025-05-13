@@ -27,10 +27,10 @@ import ContactMailIcon from "@mui/icons-material/ContactMail";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
-import RemoveIcon from '@mui/icons-material/Remove';
-import RateReviewIcon from '@mui/icons-material/RateReview';
-import AddIcon from '@mui/icons-material/Add';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import RemoveIcon from "@mui/icons-material/Remove";
+import RateReviewIcon from "@mui/icons-material/RateReview";
+import AddIcon from "@mui/icons-material/Add";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 
 const libraries = ["places"];
 
@@ -46,7 +46,7 @@ export default function MapPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [showError, setShowError] = useState(false);
   const mapRef = useRef(null);
-  
+
   // Review related states (if you guys wanna make a separate page)
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [rating, setRating] = useState(0);
@@ -76,10 +76,11 @@ export default function MapPage() {
         (error) => {
           // Handle geolocation errors gracefully
           let errorMsg = "Unable to access your location";
-          
-          switch(error.code) {
+
+          switch (error.code) {
             case error.PERMISSION_DENIED:
-              errorMsg = "Location access denied. Please enable location services in your browser settings.";
+              errorMsg =
+                "Location access denied. Please enable location services in your browser settings.";
               break;
             case error.POSITION_UNAVAILABLE:
               errorMsg = "Location information is unavailable.";
@@ -88,13 +89,14 @@ export default function MapPage() {
               errorMsg = "Location request timed out.";
               break;
             default:
-              errorMsg = "An unknown error occurred while getting your location.";
+              errorMsg =
+                "An unknown error occurred while getting your location.";
           }
-          
+
           console.log(errorMsg);
           setErrorMessage(errorMsg);
           setShowError(true);
-          
+
           // Default to New York City
           setUserLocation({ lat: 40.7128, lng: -74.006 });
         }
@@ -148,19 +150,18 @@ export default function MapPage() {
   };
 
   const handleSubmitReview = () => {
-    // This is temporary back end stuff i asked gpt to implent either hamim or kenneth update it
     console.log({
       deliId: selectedDeli?.id || selectedDeli?.store_name,
       rating,
       comment: reviewComment,
       userId: user?.id,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-    
+
     // This is temporary just to test the submit message
     setReviewSubmitted(true);
     setReviewDialogOpen(false);
-    
+
     setTimeout(() => {
       setRating(0);
       setReviewComment("");
@@ -192,38 +193,63 @@ export default function MapPage() {
       onClick: handleSignOut,
     },
     {
-      icon: <RemoveIcon />, 
-      name: "Remove Deli", 
-      onClick: () => router.push("/remove-deli")
+      icon: <RemoveIcon />,
+      name: "Remove Deli",
+      onClick: () => router.push("/remove-deli"),
     },
     {
-      icon: <AddIcon />, 
-      name: "Add Deli", 
-      onClick: () => router.push("/deli-listing")
+      icon: <AddIcon />,
+      name: "Add Deli",
+      onClick: () => router.push("/deli-listing"),
     },
     {
-      icon: <AttachMoneyIcon />, 
-      name: "Add Price ", 
-      onClick: () => router.push("/add-price/deli_id")
-    }
+      icon: <AttachMoneyIcon />,
+      name: "Add Price ",
+      onClick: () => router.push("/add-price/deli_id"),
+    },
   ];
 
-  if (loadError) return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
-      <Typography variant="h5" color="error">Failed to load map</Typography>
-      <Typography variant="body1">Please check your internet connection and try again.</Typography>
-      <Button variant="contained" sx={{ mt: 2 }} onClick={() => window.location.reload()}>
-        Reload Page
-      </Button>
-    </Box>
-  );
-  
-  if (isLoading || !isLoaded || userLocation === null) return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <Typography variant="h5">Loading map...</Typography>
-    </Box>
-  );
-  
+  if (loadError)
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          flexDirection: "column",
+        }}
+      >
+        <Typography variant="h5" color="error">
+          Failed to load map
+        </Typography>
+        <Typography variant="body1">
+          Please check your internet connection and try again.
+        </Typography>
+        <Button
+          variant="contained"
+          sx={{ mt: 2 }}
+          onClick={() => window.location.reload()}
+        >
+          Reload Page
+        </Button>
+      </Box>
+    );
+
+  if (isLoading || !isLoaded || userLocation === null)
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Typography variant="h5">Loading map...</Typography>
+      </Box>
+    );
+
   if (!isLoading && user === null) return null;
 
   const glowingDotSVG =
@@ -243,41 +269,42 @@ export default function MapPage() {
 
   return (
     <>
-      {/* Sidebar */}
+      {/*this is basically the section for showing the information INSIDE the popup*/}
       {selectedDeli && (
         <Box
           sx={{
             position: "fixed",
-            top: 0,
-            left: 0,
-            width: "450px",
-            height: "100vh",
-            bgcolor: "#f9f9f9",
-            p: 2,
-            overflow: "auto",
-            zIndex: 1300,
-            boxShadow: 3,
+            top: 24,
+            left: 24,
+            width: { xs: "90%", sm: "550px" },
+            bgcolor: "#fff",
             color: "#111",
+            p: 3,
+            borderRadius: 2,
+            boxShadow: 5,
+            zIndex: 1300,
           }}
         >
-          <Typography variant="h5" gutterBottom sx={{ color: "#111" }}>
+          <Typography variant="h6" gutterBottom>
             {selectedDeli.store_name || "Unnamed Deli"}
           </Typography>
+
           {selectedDeli.street_address && (
-            <Typography variant="body1" sx={{ color: "#111" }}>
+            <Typography variant="body2">
               <strong>Address:</strong> {selectedDeli.street_address}
             </Typography>
           )}
           {selectedDeli.borough && (
-            <Typography variant="body1" sx={{ color: "#111" }}>
+            <Typography variant="body2">
               <strong>Borough:</strong> {selectedDeli.borough}
             </Typography>
           )}
           {selectedDeli.zip_code && (
-            <Typography variant="body1" sx={{ color: "#111" }}>
+            <Typography variant="body2" gutterBottom>
               <strong>Zip Code:</strong> {selectedDeli.zip_code}
             </Typography>
           )}
+
           <Box mt={2} mb={2}>
             <img
               src="/placeholder-image.jpg"
@@ -285,12 +312,12 @@ export default function MapPage() {
               style={{ width: "100%", borderRadius: "8px" }}
             />
           </Box>
-          <Typography variant="body2" sx={{ color: "#111", mb: 2 }}>
+
+          <Typography variant="body2" sx={{ mb: 2 }}>
             <strong>Special Deals:</strong> Coming soon!
           </Typography>
 
-         {/*the review section */}
-          <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
             <Button
               variant="contained"
               color="primary"
@@ -300,7 +327,7 @@ export default function MapPage() {
             >
               Leave a Review
             </Button>
-            
+
             <Button
               variant="outlined"
               onClick={() => setSelectedDeli(null)}
@@ -312,6 +339,8 @@ export default function MapPage() {
         </Box>
       )}
 
+
+      {/*this is the section that actually shows the map + the user location and marker*/}
       {/* Map */}
       <Box sx={{ height: "100vh", width: "100vw" }}>
         <GoogleMap
@@ -349,55 +378,57 @@ export default function MapPage() {
         </GoogleMap>
       </Box>
 
+
       {/* Review Dialog - Modal panel with correct styling and centering */}
-      <Box 
+      <Box
         sx={{
-          display: reviewDialogOpen ? 'flex' : 'none',
-          position: 'fixed',
+          display: reviewDialogOpen ? "flex" : "none",
+          position: "fixed",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.75)',
-          alignItems: 'center',
-          justifyContent: 'center',
+          backgroundColor: "rgba(0, 0, 0, 0.75)",
+          alignItems: "center",
+          justifyContent: "center",
           zIndex: 9999,
         }}
         onClick={handleCloseReviewDialog}
       >
-        <Box 
+        <Box
           sx={{
-            width: { xs: '90%', sm: '550px' },
-            maxWidth: '100%',
+            width: { xs: "90%", sm: "550px" },
+            maxWidth: "100%",
             borderRadius: 1,
-            overflow: 'hidden',
-            backgroundColor: '#333',
-            boxShadow: '0 24px 38px rgba(0,0,0,0.25)',
+            overflow: "hidden",
+            backgroundColor: "#333",
+            boxShadow: "0 24px 38px rgba(0,0,0,0.25)",
           }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <Box sx={{ p: 3, textAlign: 'center' }}>
-            <Typography 
-              variant="h5" 
-              sx={{ 
-                color: 'white',
+          <Box sx={{ p: 3, textAlign: "center" }}>
+            <Typography
+              variant="h5"
+              sx={{
+                color: "white",
                 fontWeight: 600,
-                fontSize: '1.5rem'
+                fontSize: "1.5rem",
               }}
             >
-              Review {selectedDeli?.store_name || 'this deli'}
+              Review {selectedDeli?.store_name || "this deli"}
             </Typography>
           </Box>
-          
+
+
           {/* Content area */}
-          <Box sx={{ p: 4, bgcolor: '#1c1c1c' }}>
+          <Box sx={{ p: 4, bgcolor: "#1c1c1c" }}>
             {/* Rating section */}
             <Box sx={{ mb: 4 }}>
-              <Typography variant="h6" sx={{ color: 'white', mb: 3, ml: 2 }}>
+              <Typography variant="h6" sx={{ color: "white", mb: 3, ml: 2 }}>
                 Your Rating:
               </Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+              <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
                 <Rating
                   name="deli-rating"
                   value={rating}
@@ -406,36 +437,37 @@ export default function MapPage() {
                   }}
                   precision={1}
                   size="large"
-                  sx={{ 
-                    '& .MuiRating-icon': {
-                      color: 'gray',
-                      fontSize: '3rem'
-                    }
+                  sx={{
+                    "& .MuiRating-icon": {
+                      color: "gray",
+                      fontSize: "3rem",
+                    },
                   }}
                 />
               </Box>
             </Box>
-            
+
+
             {/* Comment field */}
-            <Box 
-              component="div" 
-              sx={{ 
+            <Box
+              component="div"
+              sx={{
                 borderRadius: 1,
-                border: '2px solid #2196f3',
-                position: 'relative',
+                border: "2px solid #2196f3",
+                position: "relative",
                 mb: 3,
-                height: '120px',
+                height: "120px",
               }}
             >
-              <Box 
-                sx={{ 
-                  position: 'absolute',
+              <Box
+                sx={{
+                  position: "absolute",
                   top: -12,
                   left: 12,
                   paddingX: 1,
-                  backgroundColor: '#1c1c1c',
-                  color: '#999',
-                  fontSize: '0.85rem'
+                  backgroundColor: "#1c1c1c",
+                  color: "#999",
+                  fontSize: "0.85rem",
                 }}
               >
                 Your Review (Optional)
@@ -445,56 +477,65 @@ export default function MapPage() {
                 onChange={(e) => setReviewComment(e.target.value)}
                 placeholder="Tell us about your experience..."
                 style={{
-                  width: '100%',
-                  height: '100%',
-                  padding: '12px',
-                  backgroundColor: '#1c1c1c',
-                  color: 'white',
-                  border: 'none',
-                  outline: 'none',
-                  resize: 'none',
-                  fontFamily: 'inherit',
-                  fontSize: '1rem',
-                  boxSizing: 'border-box'
+                  width: "100%",
+                  height: "100%",
+                  padding: "12px",
+                  backgroundColor: "#1c1c1c",
+                  color: "white",
+                  border: "none",
+                  outline: "none",
+                  resize: "none",
+                  fontFamily: "inherit",
+                  fontSize: "1rem",
+                  boxSizing: "border-box",
                 }}
               />
             </Box>
-            
+
+
             {/* Buttons */}
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
-              <Button 
-                onClick={handleCloseReviewDialog} 
-                sx={{ 
-                  px: 4, 
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 2,
+                mt: 3,
+              }}
+            >
+              <Button
+                onClick={handleCloseReviewDialog}
+                sx={{
+                  px: 4,
                   py: 1.5,
-                  color: 'white',
-                  border: '1px solid #444',
-                  borderRadius: '4px',
-                  backgroundColor: 'transparent',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255,255,255,0.05)'
-                  }
+                  color: "white",
+                  border: "1px solid #444",
+                  borderRadius: "4px",
+                  backgroundColor: "transparent",
+                  "&:hover": {
+                    backgroundColor: "rgba(255,255,255,0.05)",
+                  },
                 }}
               >
                 Cancel
               </Button>
-              <Button 
-                onClick={handleSubmitReview} 
+
+              <Button
+                onClick={handleSubmitReview}
                 disabled={rating === 0}
-                sx={{ 
-                  px: 4, 
+                sx={{
+                  px: 4,
                   py: 1.5,
-                  backgroundColor: 'white',
-                  color: '#333',
-                  fontWeight: 'bold',
-                  borderRadius: '4px',
-                  '&:hover': {
-                    backgroundColor: '#f5f5f5'
+                  backgroundColor: "white",
+                  color: "#333",
+                  fontWeight: "bold",
+                  borderRadius: "4px",
+                  "&:hover": {
+                    backgroundColor: "#f5f5f5",
                   },
-                  '&.Mui-disabled': {
-                    backgroundColor: '#555',
-                    color: '#aaa'
-                  }
+                  "&.Mui-disabled": {
+                    backgroundColor: "#555",
+                    color: "#aaa",
+                  },
                 }}
               >
                 Submit Review
@@ -504,29 +545,32 @@ export default function MapPage() {
         </Box>
       </Box>
 
+
       {/* Success Snackbar */}
       <Snackbar
         open={reviewSubmitted}
         autoHideDuration={3000}
         onClose={() => setReviewSubmitted(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       >
         <Alert severity="success" variant="filled">
           Thank you! Your review has been submitted.
         </Alert>
       </Snackbar>
 
+
       {/* Error Snackbar */}
-      <Snackbar 
-        open={showError} 
-        autoHideDuration={6000} 
+      <Snackbar
+        open={showError}
+        autoHideDuration={6000}
         onClose={handleCloseError}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert onClose={handleCloseError} severity="warning" variant="filled">
           {errorMessage}
         </Alert>
       </Snackbar>
+
 
       {/*this is the new appbar, its basically using mui speed dial component.*/}
       <Box sx={{ position: "fixed", bottom: 16, right: 16, zIndex: 1400 }}>
