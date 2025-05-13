@@ -13,6 +13,13 @@ import {
   SpeedDialAction,
   Snackbar,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Rating,
+  TextField,
+  Stack,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
@@ -21,6 +28,9 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import RemoveIcon from '@mui/icons-material/Remove';
+import RateReviewIcon from '@mui/icons-material/RateReview';
+import AddIcon from '@mui/icons-material/Add';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 
 const libraries = ["places"];
 
@@ -36,6 +46,12 @@ export default function MapPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [showError, setShowError] = useState(false);
   const mapRef = useRef(null);
+  
+  // Review related states (if you guys wanna make a separate page)
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
@@ -122,11 +138,41 @@ export default function MapPage() {
     setShowError(false);
   };
 
+  // Review dialog handlers
+  const handleOpenReviewDialog = () => {
+    setReviewDialogOpen(true);
+  };
+
+  const handleCloseReviewDialog = () => {
+    setReviewDialogOpen(false);
+  };
+
+  const handleSubmitReview = () => {
+    // This is temporary back end stuff i asked gpt to implent either hamim or kenneth update it
+    console.log({
+      deliId: selectedDeli?.id || selectedDeli?.store_name,
+      rating,
+      comment: reviewComment,
+      userId: user?.id,
+      timestamp: new Date().toISOString()
+    });
+    
+    // This is temporary just to test the submit message
+    setReviewSubmitted(true);
+    setReviewDialogOpen(false);
+    
+    setTimeout(() => {
+      setRating(0);
+      setReviewComment("");
+      setReviewSubmitted(false);
+    }, 3000);
+  };
+
   const actions = [
     { icon: <HomeIcon />, name: "Home", onClick: () => router.push("/") },
     { icon: <InfoIcon />, name: "About", onClick: () => router.push("/about") },
     {
-      icon: <AttachMoneyIcon />,
+      icon: <LocalOfferIcon />,
       name: "Pricing",
       onClick: () => router.push("/pricing"),
     },
@@ -147,8 +193,18 @@ export default function MapPage() {
     },
     {
       icon: <RemoveIcon />, 
-      name: "Remove", 
+      name: "Remove Deli", 
       onClick: () => router.push("/remove-deli")
+    },
+    {
+      icon: <AddIcon />, 
+      name: "Add Deli", 
+      onClick: () => router.push("/deli-listing")
+    },
+    {
+      icon: <AttachMoneyIcon />, 
+      name: "Add Price ", 
+      onClick: () => router.push("/add-price/deli_id")
     }
   ];
 
@@ -229,16 +285,30 @@ export default function MapPage() {
               style={{ width: "100%", borderRadius: "8px" }}
             />
           </Box>
-          <Typography variant="body2" sx={{ color: "#111" }}>
+          <Typography variant="body2" sx={{ color: "#111", mb: 2 }}>
             <strong>Special Deals:</strong> Coming soon!
           </Typography>
-          <Button
-            variant="contained"
-            sx={{ mt: 2 }}
-            onClick={() => setSelectedDeli(null)}
-          >
-            Close
-          </Button>
+
+         {/*the review section */}
+          <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<RateReviewIcon />}
+              onClick={handleOpenReviewDialog}
+              sx={{ flex: 1 }}
+            >
+              Leave a Review
+            </Button>
+            
+            <Button
+              variant="outlined"
+              onClick={() => setSelectedDeli(null)}
+              sx={{ flex: 1 }}
+            >
+              Close
+            </Button>
+          </Box>
         </Box>
       )}
 
@@ -278,6 +348,173 @@ export default function MapPage() {
           })}
         </GoogleMap>
       </Box>
+
+      {/* Review Dialog - Modal panel with correct styling and centering */}
+      <Box 
+        sx={{
+          display: reviewDialogOpen ? 'flex' : 'none',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.75)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+        }}
+        onClick={handleCloseReviewDialog}
+      >
+        <Box 
+          sx={{
+            width: { xs: '90%', sm: '550px' },
+            maxWidth: '100%',
+            borderRadius: 1,
+            overflow: 'hidden',
+            backgroundColor: '#333',
+            boxShadow: '0 24px 38px rgba(0,0,0,0.25)',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <Box sx={{ p: 3, textAlign: 'center' }}>
+            <Typography 
+              variant="h5" 
+              sx={{ 
+                color: 'white',
+                fontWeight: 600,
+                fontSize: '1.5rem'
+              }}
+            >
+              Review {selectedDeli?.store_name || 'this deli'}
+            </Typography>
+          </Box>
+          
+          {/* Content area */}
+          <Box sx={{ p: 4, bgcolor: '#1c1c1c' }}>
+            {/* Rating section */}
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h6" sx={{ color: 'white', mb: 3, ml: 2 }}>
+                Your Rating:
+              </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+                <Rating
+                  name="deli-rating"
+                  value={rating}
+                  onChange={(event, newValue) => {
+                    setRating(newValue);
+                  }}
+                  precision={1}
+                  size="large"
+                  sx={{ 
+                    '& .MuiRating-icon': {
+                      color: 'gray',
+                      fontSize: '3rem'
+                    }
+                  }}
+                />
+              </Box>
+            </Box>
+            
+            {/* Comment field */}
+            <Box 
+              component="div" 
+              sx={{ 
+                borderRadius: 1,
+                border: '2px solid #2196f3',
+                position: 'relative',
+                mb: 3,
+                height: '120px',
+              }}
+            >
+              <Box 
+                sx={{ 
+                  position: 'absolute',
+                  top: -12,
+                  left: 12,
+                  paddingX: 1,
+                  backgroundColor: '#1c1c1c',
+                  color: '#999',
+                  fontSize: '0.85rem'
+                }}
+              >
+                Your Review (Optional)
+              </Box>
+              <textarea
+                value={reviewComment}
+                onChange={(e) => setReviewComment(e.target.value)}
+                placeholder="Tell us about your experience..."
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  padding: '12px',
+                  backgroundColor: '#1c1c1c',
+                  color: 'white',
+                  border: 'none',
+                  outline: 'none',
+                  resize: 'none',
+                  fontFamily: 'inherit',
+                  fontSize: '1rem',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </Box>
+            
+            {/* Buttons */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
+              <Button 
+                onClick={handleCloseReviewDialog} 
+                sx={{ 
+                  px: 4, 
+                  py: 1.5,
+                  color: 'white',
+                  border: '1px solid #444',
+                  borderRadius: '4px',
+                  backgroundColor: 'transparent',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.05)'
+                  }
+                }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSubmitReview} 
+                disabled={rating === 0}
+                sx={{ 
+                  px: 4, 
+                  py: 1.5,
+                  backgroundColor: 'white',
+                  color: '#333',
+                  fontWeight: 'bold',
+                  borderRadius: '4px',
+                  '&:hover': {
+                    backgroundColor: '#f5f5f5'
+                  },
+                  '&.Mui-disabled': {
+                    backgroundColor: '#555',
+                    color: '#aaa'
+                  }
+                }}
+              >
+                Submit Review
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Success Snackbar */}
+      <Snackbar
+        open={reviewSubmitted}
+        autoHideDuration={3000}
+        onClose={() => setReviewSubmitted(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <Alert severity="success" variant="filled">
+          Thank you! Your review has been submitted.
+        </Alert>
+      </Snackbar>
 
       {/* Error Snackbar */}
       <Snackbar 

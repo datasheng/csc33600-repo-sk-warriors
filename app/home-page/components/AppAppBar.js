@@ -82,21 +82,9 @@ export default function AppAppBar() {
                 </Button>
               </Link>
 
-              <Link href="/add-price">
+              <Link href="/map">
                 <Button variant="text" color="info" size="small">
-                  Add Price
-                </Button>
-              </Link>
-
-              <Link href="/deli-listing">
-                <Button variant="text" color="info" size="small">
-                  Add Delis
-                </Button>
-              </Link>
-
-              <Link href="/remove">
-                <Button variant="text" color="info" size="small">
-                  Remove
+                  Map
                 </Button>
               </Link>
 
@@ -123,16 +111,7 @@ export default function AppAppBar() {
                 </Button>
               </Link>
 
-              <Link href="/review">
-                <Button
-                  variant="text"
-                  color="info"
-                  size="small"
-                  sx={{ minWidth: 0 }}
-                >
-                  Review
-                </Button>
-              </Link>
+              
             </Box>
           </Box>
           <Box
