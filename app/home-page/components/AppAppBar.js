@@ -1,4 +1,5 @@
 "use client";
+
 import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -37,22 +38,35 @@ export default function AppAppBar() {
   const [open, setOpen] = React.useState(false);
   const user = useUser();
   const [plan, setPlan] = React.useState("free");
+  const [isAdmin, setIsAdmin] = React.useState(false);
 
   React.useEffect(() => {
-    const fetchPlan = async () => {
+    const fetchUserInfo = async () => {
+      if (!user?.id) return;
+
       try {
-        const res = await fetch("/api/user/plan", {
-          headers: {
-            "x-user-id": user?.id || "1",
-          },
-        });
-        const json = await res.json();
-        setPlan(json.plan || "free");
-      } catch {
-        setPlan("free");
+        const [planRes, roleRes] = await Promise.all([
+          fetch("/api/user/plan", {
+            headers: { "x-user-id": user.id },
+          }),
+          fetch("/api/user/roles", {
+            headers: { "x-user-id": user.id },
+          }),
+        ]);
+
+        const planData = await planRes.json();
+        setPlan(planData.plan || "free");
+
+        const rolesData = await roleRes.json();
+        if (Array.isArray(rolesData.roles)) {
+          setIsAdmin(rolesData.roles.includes("admin"));
+        }
+      } catch (err) {
+        console.error("Failed to fetch plan or roles", err);
       }
     };
-    if (user) fetchPlan();
+
+    fetchUserInfo();
   }, [user]);
 
   const toggleDrawer = (newOpen) => () => {
@@ -101,6 +115,13 @@ export default function AppAppBar() {
                 <Link href="/all-delis">
                   <Button variant="text" color="info" size="small">
                     All Delis
+                  </Button>
+                </Link>
+              )}
+              {isAdmin && (
+                <Link href="/admin/dashboard">
+                  <Button variant="text" color="warning" size="small">
+                    Admin
                   </Button>
                 </Link>
               )}
@@ -181,14 +202,17 @@ export default function AppAppBar() {
                 </Link>
                 {user && (
                   <Link href="/map" style={{ textDecoration: "none", color: "#fff" }}>
-                    <MenuItem>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>Map</Box>
-                    </MenuItem>
+                    <MenuItem>Map</MenuItem>
                   </Link>
                 )}
                 {(plan === "plus" || plan === "business") && (
                   <Link href="/all-delis" style={{ textDecoration: "none", color: "#fff" }}>
                     <MenuItem>All Delis</MenuItem>
+                  </Link>
+                )}
+                {isAdmin && (
+                  <Link href="/admin/dashboard" style={{ textDecoration: "none", color: "#fff" }}>
+                    <MenuItem>Admin</MenuItem>
                   </Link>
                 )}
                 <Link href="/chatbot" style={{ textDecoration: "none", color: "#fff" }}>
@@ -231,15 +255,15 @@ export default function AppAppBar() {
                         </Button>
                       </MenuItem>
                     </Link>
+                    <Link href="/sign-in">
+                      <MenuItem>
+                        <Button color="primary" variant="outlined" fullWidth>
+                          Sign in
+                        </Button>
+                      </MenuItem>
+                    </Link>
                   </>
                 )}
-                <Link href="/sign-in">
-                  <MenuItem>
-                    <Button color="primary" variant="outlined" fullWidth>
-                      Sign in
-                    </Button>
-                  </MenuItem>
-                </Link>
               </Box>
             </Drawer>
           </Box>
