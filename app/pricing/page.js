@@ -11,8 +11,7 @@ import {
   Divider,
   Chip,
   Grid,
-  Paper,
-  Avatar,
+  Snackbar,
 } from "@mui/material";
 import AppAppBar from "../home-page/components/AppAppBar";
 import Footer from "../home-page/components/Footer";
@@ -136,11 +135,13 @@ export default function Pricing() {
     try {
       const res = await fetch(`/api/subscribe/${plan}`, {
         method: "POST",
-        headers: { "x-user-id": user.id }, // replace with real header once integrated
+        headers: { "x-user-id": user?.id ?? "" }, // fallback empty
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Subscription failed");
-      setToast(`✅ Subscribed to ${plan}`);
+      setToast(
+        `✅ You are now subscribed to the ${plan.charAt(0).toUpperCase() + plan.slice(1)} plan`
+      );
     } catch (err) {
       setToast("❌ " + err.message);
     } finally {
@@ -148,7 +149,6 @@ export default function Pricing() {
     }
   };
 
-  /* pricing tiers */
   const tiers = [
     {
       title: "Free",
@@ -207,8 +207,6 @@ export default function Pricing() {
     },
   ];
 
-  /* testimonials & faq kept unchanged for brevity … */
-
   return (
     <AppTheme>
       <AppAppBar />
@@ -223,7 +221,6 @@ export default function Pricing() {
           gap: { xs: 3, sm: 6 },
         }}
       >
-        {/* heading */}
         <Box sx={{ width: { sm: "100%", md: "60%" }, textAlign: "center" }}>
           <Typography component="h2" variant="h4" gutterBottom>
             Pricing
@@ -233,7 +230,6 @@ export default function Pricing() {
           </Typography>
         </Box>
 
-        {/* cards */}
         <Grid
           container
           spacing={3}
@@ -250,9 +246,16 @@ export default function Pricing() {
             </Grid>
           ))}
         </Grid>
-
-        {/* … testimonials / FAQ / CTA remain the same … */}
       </Container>
+
+      {/* ✅ Toast Message */}
+      <Snackbar
+        open={!!toast}
+        autoHideDuration={4000}
+        onClose={() => setToast("")}
+        message={toast}
+      />
+
       <Footer />
     </AppTheme>
   );

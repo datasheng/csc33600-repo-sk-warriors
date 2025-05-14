@@ -36,6 +36,24 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 export default function AppAppBar() {
   const [open, setOpen] = React.useState(false);
   const user = useUser();
+  const [plan, setPlan] = React.useState("free");
+
+  React.useEffect(() => {
+    const fetchPlan = async () => {
+      try {
+        const res = await fetch("/api/user/plan", {
+          headers: {
+            "x-user-id": user?.id || "1",
+          },
+        });
+        const json = await res.json();
+        setPlan(json.plan || "free");
+      } catch {
+        setPlan("free");
+      }
+    };
+    if (user) fetchPlan();
+  }, [user]);
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -59,9 +77,7 @@ export default function AppAppBar() {
     >
       <Container maxWidth="lg">
         <StyledToolbar variant="dense" disableGutters>
-          <Box
-            sx={{ flexGrow: 1, display: "flex", alignItems: "center", px: 0 }}
-          >
+          <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center", px: 0 }}>
             <Sitemark />
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
               <Link href="/">
@@ -69,58 +85,48 @@ export default function AppAppBar() {
                   Home
                 </Button>
               </Link>
-
               <Link href="/about-us">
                 <Button variant="text" color="info" size="small">
                   About Us
                 </Button>
               </Link>
-              
               {user && (
-                 <Link href="/map">
+                <Link href="/map">
                   <Button variant="text" color="info" size="small">
-                     Map
-                     </Button>
-                     </Link>
-                     )}
-
+                    Map
+                  </Button>
+                </Link>
+              )}
+              {(plan === "plus" || plan === "business") && (
+                <Link href="/all-delis">
+                  <Button variant="text" color="info" size="small">
+                    All Delis
+                  </Button>
+                </Link>
+              )}
               <Link href="/chatbot">
                 <Button variant="text" color="info" size="small">
                   ChronicleAI
                 </Button>
               </Link>
-
               <Link href="https://mintlify.com/" target="_blank">
                 <Button variant="text" color="info" size="small">
                   Documentation
                 </Button>
               </Link>
-
               <Link href="/pricing">
                 <Button variant="text" color="info" size="small">
                   Pricing
                 </Button>
               </Link>
-
               <Link href="/contact">
-                <Button
-                  variant="text"
-                  color="info"
-                  size="small"
-                  sx={{ minWidth: 0 }}
-                >
+                <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
                   Contact
                 </Button>
               </Link>
             </Box>
           </Box>
-          <Box
-            sx={{
-              display: { xs: "none", md: "flex" },
-              gap: 1,
-              alignItems: "center",
-            }}
-          >
+          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1, alignItems: "center" }}>
             {user ? (
               <>
                 <Link href="/profile" passHref>
@@ -146,7 +152,6 @@ export default function AppAppBar() {
                     Sign in
                   </Button>
                 </Link>
-
                 <Link href="/sign-up">
                   <Button color="primary" variant="contained" size="small">
                     Sign up
@@ -163,68 +168,39 @@ export default function AppAppBar() {
               anchor="top"
               open={open}
               onClose={toggleDrawer(false)}
-              PaperProps={{
-                sx: {
-                  top: "var(--template-frame-height, 0px)",
-                },
-              }}
+              PaperProps={{ sx: { top: "var(--template-frame-height, 0px)" } }}
             >
               <Box sx={{ p: 2, backgroundColor: "background.default" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                  }}
-                >
+                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                   <IconButton onClick={toggleDrawer(false)}>
                     <CloseRoundedIcon />
                   </IconButton>
                 </Box>
-
-                <Link
-                  href="/about-us"
-                  style={{ textDecoration: "none", color: "#fff" }}
-                >
+                <Link href="/about-us" style={{ textDecoration: "none", color: "#fff" }}>
                   <MenuItem>About Us</MenuItem>
                 </Link>
-                
-
                 {user && (
-                  <Link
-                    href="/map"
-                    style={{ textDecoration: "none", color: "#fff" }}
-                  >
+                  <Link href="/map" style={{ textDecoration: "none", color: "#fff" }}>
                     <MenuItem>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        Map
-                      </Box>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>Map</Box>
                     </MenuItem>
                   </Link>
                 )}
-
-                <Link
-                  href="/chatbot"
-                  style={{ textDecoration: "none", color: "#fff" }}
-                >
+                {(plan === "plus" || plan === "business") && (
+                  <Link href="/all-delis" style={{ textDecoration: "none", color: "#fff" }}>
+                    <MenuItem>All Delis</MenuItem>
+                  </Link>
+                )}
+                <Link href="/chatbot" style={{ textDecoration: "none", color: "#fff" }}>
                   <MenuItem>ChronicleAI</MenuItem>
                 </Link>
-
-                <Link
-                  href="/pricing"
-                  style={{ textDecoration: "none", color: "#fff" }}
-                >
+                <Link href="/pricing" style={{ textDecoration: "none", color: "#fff" }}>
                   <MenuItem>Pricing</MenuItem>
                 </Link>
-
-                <Link
-                  href="/contact"
-                  style={{ textDecoration: "none", color: "#fff" }}
-                >
+                <Link href="/contact" style={{ textDecoration: "none", color: "#fff" }}>
                   <MenuItem>Contact</MenuItem>
                 </Link>
-
                 <Divider sx={{ my: 3 }} />
-
                 {user ? (
                   <>
                     <MenuItem sx={{ gap: 2 }}>

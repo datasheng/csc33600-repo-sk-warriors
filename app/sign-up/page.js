@@ -22,10 +22,9 @@ import GoogleIcon from '@mui/icons-material/Google';
 import MicrosoftIcon from '@mui/icons-material/Microsoft';
 import { useStackApp } from '@stackframe/stack';
 import { useRouter } from 'next/navigation';
+import { saveSqlUserId } from '@/lib/sqlUserId';
 
 export default function SignUpPage() {
-  console.log('Rendering SignUpPage');
-
   const app = useStackApp();
   const router = useRouter();
   const [email, setEmail] = React.useState('');
@@ -42,7 +41,6 @@ export default function SignUpPage() {
 
   const validateInputs = () => {
     let isValid = true;
-
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
@@ -51,7 +49,6 @@ export default function SignUpPage() {
       setEmailError(false);
       setEmailErrorMessage('');
     }
-
     if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
@@ -60,7 +57,6 @@ export default function SignUpPage() {
       setPasswordError(false);
       setPasswordErrorMessage('');
     }
-
     if (!name || name.trim().length === 0) {
       setNameError(true);
       setNameErrorMessage('Name is required.');
@@ -69,41 +65,35 @@ export default function SignUpPage() {
       setNameError(false);
       setNameErrorMessage('');
     }
-
     return isValid;
   };
 
   const registerInMySQL = async (userData) => {
-    console.log('MESSAGE 1: registerInMySQL:', userData);
     const response = await fetch('/api/register-user', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),
     });
-
     if (!response.ok) {
       const text = await response.text();
       throw new Error(`MySQL registration failed: ${text}`);
     }
-
     const data = await response.json();
     if (!data.success) {
       throw new Error(data.error || 'Database registration failed');
     }
-    console.log('MESSAGE2: registration successful:', data);
+    if (data.user_id) {
+      saveSqlUserId(data.user_id);
+    }
     return data;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('MESSAGE3: handleSubmit completed');
-
     if (!validateInputs()) return;
-
     setIsLoading(true);
     setFormError('');
     try {
-      console.log('MESSAGE4: signing up with stackauth:', { email, name });
       const result = await app.signUpWithCredential(
         { email, password, attributes: { name } },
         { redirect: false }
@@ -111,8 +101,6 @@ export default function SignUpPage() {
       if (result.status === 'error') {
         throw new Error(result.error?.message || 'Stack Auth signup failed');
       }
-      console.log('MESSAGE5: stackauth worked');
-
       await registerInMySQL({
         username: email,
         email,
@@ -120,10 +108,8 @@ export default function SignUpPage() {
         display_name: name,
         auth_provider: 'email',
       });
-
       router.push('/profile');
     } catch (err) {
-      console.error('signup error:', err);
       setFormError(err.message || 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
@@ -134,23 +120,19 @@ export default function SignUpPage() {
     setIsLoading(true);
     setFormError('');
     try {
-      console.log(`signing up with ${provider}`);
       const result = await app.signInWithOAuth(provider, { redirect: false });
       if (result.status === 'error') {
         throw new Error(result.error?.message || `${provider} OAuth failed`);
       }
-      console.log(`${provider} OAuth successful:`, result.user.email);
-
+      const displayName = result.user.displayName || result.user.email.split('@')[0];
       await registerInMySQL({
         username: result.user.email,
         email: result.user.email,
-        display_name: result.user.displayName || result.user.email.split('@')[0],
+        display_name: displayName,
         auth_provider: provider.toLowerCase(),
       });
-
       router.push('/profile');
     } catch (err) {
-      console.error(`${provider} signup failed:`, err);
       setFormError(`Failed to sign up with ${provider}: ${err.message}`);
     } finally {
       setIsLoading(false);
