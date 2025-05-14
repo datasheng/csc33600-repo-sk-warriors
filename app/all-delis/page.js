@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Box, Typography, CircularProgress, Paper, Button } from "@mui/material";
+import { Box, Typography, CircularProgress, Paper, Button, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function AllDelis() {
   const [delis, setDelis] = useState([]);
@@ -37,14 +38,21 @@ export default function AllDelis() {
           <Typography variant="body2">📍 {deli.address}</Typography>
           {deli.phone && <Typography variant="body2">📞 {deli.phone}</Typography>}
 
-          {/* 🚀 Button to add sandwich & price */}
-          <Button
-            sx={{ mt: 2 }}
-            variant="outlined"
-            onClick={() => router.push(`/add-price/${deli.deli_id}`)}
-          >
-            Add Sandwich
-          </Button>
+          {/* Button group: Add + View */}
+          <Stack direction="row" spacing={1} mt={2}>
+            <Button
+              variant="outlined"
+              onClick={() => router.push(`/add-price/${deli.deli_id}`)}
+            >
+              Add Sandwich
+            </Button>
+
+            <Link href={`/deli-listing/${deli.deli_id}/sandwiches`} passHref>
+              <Button variant="contained" component="a">
+                View Sandwiches
+              </Button>
+            </Link>
+          </Stack>
         </Paper>
       ))}
     </Box>

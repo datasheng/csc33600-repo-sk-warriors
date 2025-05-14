@@ -8,7 +8,7 @@ export async function POST(req) {
 
     if (!deli_id || !sandwich_name || !price) {
       return NextResponse.json(
-        { error: "Missing deli_id, sandwich_name or price" },
+        { error: "Missing deli_id, sandwich_name, or price" },
         { status: 400 }
       );
     }
@@ -21,29 +21,36 @@ export async function POST(req) {
       waitForConnections: true,
     });
 
-    // Get or create sandwich
-    let [rows] = await pool.execute(
-      "SELECT sandwich_id FROM Sandwich WHERE name = ?",
-      [sandwich_name]
+    // TODO: replace with the real logged‑in user
+    const submitted_by = 1;
+
+    /* ---------------------------------------------------
+       1. Get (or create) the sandwich
+    ---------------------------------------------------- */
+    const [rows] = await pool.execute(
+      "SELECT sandwich_id FROM Sandwich WHERE name = ? LIMIT 1",
+      [sandwich_name.trim()]
     );
 
     let sandwich_id;
-
     if (rows.length > 0) {
       sandwich_id = rows[0].sandwich_id;
     } else {
       const [insertResult] = await pool.execute(
         "INSERT INTO Sandwich (name) VALUES (?)",
-        [sandwich_name]
+        [sandwich_name.trim()]
       );
       sandwich_id = insertResult.insertId;
     }
 
-    // Insert into Price_listing
+    /* ---------------------------------------------------
+       2. Insert approved price listing ✔️
+    ---------------------------------------------------- */
     await pool.execute(
-      `INSERT INTO Price_listing (deli_id, sandwich_id, price, listing_type, is_approved) 
-       VALUES (?, ?, ?, 'user', false)`,
-      [deli_id, sandwich_id, price]
+      `INSERT INTO PriceListing
+         (deli_id, sandwich_id, submitted_by, price, listing_type, is_approved)
+       VALUES (?, ?, ?, ?, 'user', TRUE)`,   // <-- auto‑approved now
+      [deli_id, sandwich_id, submitted_by, parseFloat(price)]
     );
 
     return NextResponse.json({ success: true });
