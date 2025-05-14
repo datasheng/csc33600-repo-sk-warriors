@@ -3,6 +3,7 @@
 import { useLoadScript, GoogleMap, Marker } from "@react-google-maps/api";
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "@stackframe/stack";
+import { useStackApp } from "@stackframe/stack";
 import { useRouter } from "next/navigation";
 import {
   Box,
@@ -31,15 +32,14 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import AddIcon from "@mui/icons-material/Add";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
 
 const libraries = ["places"];
 
 export default function MapPage() {
   const router = useRouter();
-  const userState = useUser();
-  const user = userState?.user;
-  const isLoading = userState?.isLoading;
+  const app = useStackApp();
+  const user = useUser({ or: "redirect" });
 
   const [userLocation, setUserLocation] = useState(null);
   const [delis, setDelis] = useState([]);
@@ -54,16 +54,107 @@ export default function MapPage() {
   const [reviewComment, setReviewComment] = useState("");
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
+  //code for favorites
+  const [favorites, setFavorites] = useState([]);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  useEffect(() => {
+    async function loadFavorites() {
+      try {
+        const response = await fetch("/api/favorites", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // ✅ just in case; safe for cookie-based auth
+        });
+
+        const text = await response.text();
+        let data = {};
+        try {
+          data = text ? JSON.parse(text) : {};
+        } catch (err) {
+          console.error("❌ Failed to parse favorites JSON:", err, text);
+        }
+
+        setFavorites(data.favorites || []);
+
+        if (selectedDeli) {
+          setIsFavorite(
+            (data.favorites || []).some(
+              (fav) => fav.deli_id === selectedDeli.deli_id
+            )
+          );
+        }
+      } catch (error) {
+        console.error("Failed to load favorites:", error);
+      }
+    }
+
+    loadFavorites();
+  }, [selectedDeli]);
+
+  // Add this function to handle favorite toggle
+  const handleToggleFavorite = async () => {
+    console.log("🔥 CLICKED FAVORITE");
+
+    if (!selectedDeli) {
+      console.warn("❌ No selectedDeli");
+      return;
+    }
+
+    try {
+      const method = isFavorite ? "DELETE" : "POST";
+
+      const response = await fetch("/api/favorites", {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // ✅ ensures cookie session is included
+        body: JSON.stringify({
+          store_name: selectedDeli.store_name,
+          street_address: selectedDeli.street_address,
+        }),
+      });
+
+      const result = await response.json();
+      console.log("✅ Favorite response:", result);
+
+      if (!response.ok) throw new Error(result.error || "Favorite failed");
+
+      setIsFavorite(!isFavorite);
+      setErrorMessage(
+        isFavorite ? "Removed from favorites" : "Added to favorites!"
+      );
+      setShowError(true);
+
+      setFavorites((prev) =>
+        isFavorite
+          ? prev.filter(
+              (fav) =>
+                fav.store_name !== selectedDeli.store_name ||
+                fav.street_address !== selectedDeli.street_address
+            )
+          : [
+              ...prev,
+              {
+                store_name: selectedDeli.store_name,
+                street_address: selectedDeli.street_address,
+              },
+            ]
+      );
+    } catch (err) {
+      console.error("🔥 Favorite request error:", err);
+      setErrorMessage("Favorite failed. Try again.");
+      setShowError(true);
+    }
+  };
+
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries,
   });
-
-  useEffect(() => {
-    if (!isLoading && user === null) {
-      router.push("/sign-in");
-    }
-  }, [isLoading, user, router]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -171,15 +262,15 @@ export default function MapPage() {
   };
 
   const actions = [
-    { 
-      icon: <HomeIcon />, 
-      name: "Home", 
-      onClick: () => router.push("/") 
+    {
+      icon: <HomeIcon />,
+      name: "Home",
+      onClick: () => router.push("/"),
     },
     {
-      icon: <AccountBoxIcon/>,
+      icon: <AccountBoxIcon />,
       name: "Profile",
-      onClick: () => router.push("/profile")
+      onClick: () => router.push("/profile"),
     },
     {
       icon: <LocalOfferIcon />,
@@ -245,7 +336,7 @@ export default function MapPage() {
       </Box>
     );
 
-  if (isLoading || !isLoaded || userLocation === null)
+  if (!isLoaded || userLocation === null)
     return (
       <Box
         sx={{
@@ -258,8 +349,6 @@ export default function MapPage() {
         <Typography variant="h5">Loading map...</Typography>
       </Box>
     );
-
-  if (!isLoading && user === null) return null;
 
   const glowingDotSVG =
     "data:image/svg+xml;charset=UTF-8," +
@@ -314,14 +403,6 @@ export default function MapPage() {
             </Typography>
           )}
 
-          <Box mt={2} mb={2}>
-            <img
-              src="/placeholder-image.jpg"
-              alt="Deli"
-              style={{ width: "100%", borderRadius: "8px" }}
-            />
-          </Box>
-
           <Typography variant="body2" sx={{ mb: 2 }}>
             <strong>Special Deals:</strong> Coming soon!
           </Typography>
@@ -334,7 +415,16 @@ export default function MapPage() {
               onClick={handleOpenReviewDialog}
               sx={{ flex: 1 }}
             >
-              Leave a Review
+              Review me
+            </Button>
+
+            <Button
+              variant="contained"
+              color={isFavorite ? "secondary" : "primary"}
+              onClick={handleToggleFavorite}
+              sx={{ flex: 1 }}
+            >
+              {isFavorite ? "Favorited" : "Favorite"}
             </Button>
 
             <Button
@@ -347,7 +437,6 @@ export default function MapPage() {
           </Box>
         </Box>
       )}
-
 
       {/*this is the section that actually shows the map + the user location and marker*/}
       {/* Map */}
@@ -386,7 +475,6 @@ export default function MapPage() {
           })}
         </GoogleMap>
       </Box>
-
 
       {/* Review Dialog - Modal panel with correct styling and centering */}
       <Box
@@ -429,7 +517,6 @@ export default function MapPage() {
             </Typography>
           </Box>
 
-
           {/* Content area */}
           <Box sx={{ p: 4, bgcolor: "#1c1c1c" }}>
             {/* Rating section */}
@@ -455,7 +542,6 @@ export default function MapPage() {
                 />
               </Box>
             </Box>
-
 
             {/* Comment field */}
             <Box
@@ -500,7 +586,6 @@ export default function MapPage() {
                 }}
               />
             </Box>
-
 
             {/* Buttons */}
             <Box
@@ -554,7 +639,6 @@ export default function MapPage() {
         </Box>
       </Box>
 
-
       {/* Success Snackbar */}
       <Snackbar
         open={reviewSubmitted}
@@ -566,7 +650,6 @@ export default function MapPage() {
           Thank you! Your review has been submitted.
         </Alert>
       </Snackbar>
-
 
       {/* Error Snackbar */}
       <Snackbar
@@ -580,6 +663,20 @@ export default function MapPage() {
         </Alert>
       </Snackbar>
 
+      <Snackbar
+        open={showError}
+        autoHideDuration={3000}
+        onClose={() => setShowError(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <Alert
+          onClose={() => setShowError(false)}
+          severity={isFavorite ? "warning" : "success"}
+          variant="filled"
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
 
       {/*this is the new appbar, its basically using mui speed dial component.*/}
       <Box sx={{ position: "fixed", bottom: 16, right: 16, zIndex: 1400 }}>

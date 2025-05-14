@@ -41,10 +41,33 @@ export default function ProfilePage() {
     name: user?.displayName || "Unnamed User",
     email: user?.primaryEmail || "",
     membershipStatus: "Free",
+    favoriteSpots: 0,
   });
 
   useEffect(() => {
-    // add back end stuff here as well
+    async function fetchUserStats() {
+      if (!user) return;
+
+      try {
+        const response = await fetch("/api/user-stats", {
+          headers: {
+            Authorization: `Bearer ${await user.getIdToken()}`,
+          },
+        });
+        const data = await response.json();
+
+        setUserDetails((prev) => ({
+          ...prev,
+          favoriteSpots: data.favoritesCount || 0,
+          // If you have reviews count:
+          reviewsMade: data.reviewsCount || 0,
+        }));
+      } catch (error) {
+        console.error("Failed to fetch user stats:", error);
+      }
+    }
+
+    fetchUserStats();
   }, [user]);
 
   const getMembershipColor = (status) => {
@@ -197,7 +220,7 @@ export default function ProfilePage() {
                       {userDetails.favoriteSpots}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Sandwich spots you&apos;ve favorited
+                      Sandwich spots you favorited
                     </Typography>
                   </CardContent>
                 </Card>
