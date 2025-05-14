@@ -20,6 +20,15 @@ export default function ChatPage() {
   const messagesEndRef = useRef(null);
   const textFieldRef = useRef(null);
 
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const sendMessage = async () => {
     if (message.trim() === "" || isSending) return;
 
@@ -92,15 +101,12 @@ export default function ChatPage() {
   };
 
   const handleKeyDown = (event) => {
-    // Allow new line with Shift+Enter
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       sendMessage();
     } else if (event.key === "Enter" && event.shiftKey) {
-      // Force textarea to grow when Shift+Enter is pressed
       const textarea = textFieldRef.current?.querySelector('textarea');
       if (textarea) {
-        // Manually adjust height after next render cycle
         setTimeout(() => {
           textarea.style.height = 'auto';
           textarea.style.height = `${textarea.scrollHeight}px`;
@@ -109,15 +115,12 @@ export default function ChatPage() {
     }
   };
 
-  // Handle text field auto-resizing and focus
   useEffect(() => {
     if (textFieldRef.current) {
       const textarea = textFieldRef.current.querySelector('textarea');
       if (textarea) {
-        // Set initial focus
         textarea.focus();
         
-        // Handle auto-resize
         const handleInput = () => {
           textarea.style.height = 'auto';
           textarea.style.height = `${textarea.scrollHeight}px`;
@@ -272,7 +275,7 @@ export default function ChatPage() {
           <Stack
             direction="row"
             spacing={2}
-            alignItems="flex-end" // Align items to bottom for expanding textarea
+            alignItems="flex-end" 
             component="form"
             onSubmit={(e) => {
               e.preventDefault();
@@ -303,7 +306,7 @@ export default function ChatPage() {
                   color: "white",
                 },
                 sx: {
-                  alignItems: "flex-start", // Fixes textarea alignment
+                  alignItems: "flex-start",
                 },
               }}
               InputLabelProps={{
@@ -324,16 +327,16 @@ export default function ChatPage() {
                   "&.Mui-focused fieldset": {
                     borderColor: "white",
                   },
-                  height: "auto", // Important for proper text field growing
+                  height: "auto", 
                 },
                 "& .MuiInputBase-input": {
                   overflow: "auto",
                   "@media (max-width: 600px)": {
                     fontSize: "15px",
                   },
-                  overflowY: "auto", // Allow scrolling within the text field
-                  lineHeight: "1.5", // Better line height for readability
-                  padding: "12px 14px", // Consistent padding
+                  overflowY: "auto", 
+                  lineHeight: "1.5", 
+                  padding: "12px 14px", 
                 },
                 "& .MuiInputLabel-root.Mui-focused": {
                   color: "white",
@@ -350,16 +353,16 @@ export default function ChatPage() {
               variant="contained"
               type="submit"
               disabled={isSending || !message.trim()}
-              endIcon={isSending ? <CircularProgress size={24} color="inherit" /> : <SendIcon />}
+              endIcon={isSending ? <CircularProgress size={24} color="secondary.main" /> : <SendIcon />}
               sx={{
                 height: "56px",
                 minWidth: "100px",
-                bgcolor: "#0D1A26",
+                bgcolor: "#660708",
                 fontWeight: "bold",
-                color: "#FFFFFF",
-                textShadow: "0px 1px 2px rgba(0,0,0,0.5)", // Add text shadow for better visibility
+                color: "secondary.main",
+                textShadow: "0px 1px 2px rgba(0,0,0,0.5)", 
                 fontSize: "1rem",
-                letterSpacing: "0.5px", // Improved text spacing
+                letterSpacing: "0.5px", 
                 transition: "all 0.2s ease",
                 "@media (max-width: 600px)": {
                   width: "100%",
@@ -367,7 +370,7 @@ export default function ChatPage() {
                   fontSize: "0.875rem",
                 },
                 "&:hover": {
-                  bgcolor: "#0D1A26",
+                  bgcolor: "secondary.main",
                   transform: "translateY(-2px)",
                 },
                 "&:active": {

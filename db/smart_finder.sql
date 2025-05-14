@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS UserRole (
 -- DELIS AND PRODUCTS
 CREATE TABLE IF NOT EXISTS Deli (
     deli_id   BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    name      VARCHAR(120) NOT NULL,
-    address   VARCHAR(255),
+    store_name      VARCHAR(120) NOT NULL,
+    store_address   VARCHAR(255),
     phone     VARCHAR(20),
     place_id  VARCHAR(100)
 );

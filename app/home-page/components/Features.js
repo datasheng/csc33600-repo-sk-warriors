@@ -20,9 +20,7 @@ const items = [
     title: "Real-Time Map-Based Navigation",
     description:
       "Quickly locate nearby bodegas and sandwich spots with a live, responsive map. Filter by distance or sandwich type — no more guessing what's open or worth it.",
-    imageDark: `url("${
-      process.env.TEMPLATE_IMAGE_URL || "https://mui.com"
-    }/static/images/templates/templates-images/dash-dark.png")`,
+    imageDark: '/img/maps.png',
   },
   {
     icon: <RecommendIcon />,
