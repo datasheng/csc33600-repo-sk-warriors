@@ -1,62 +1,34 @@
-export const runtime = "nodejs";
+// app/api/register-user/route.js
 import { NextResponse } from "next/server";
 import pool from "@/db";
+import bcrypt from "bcrypt";
 
-export async function POST(request) {
-  let conn;
+export async function POST(req) {
+  const data = await req.json();
+
+  const { username, email, password_hash, display_name, auth_provider = "email" } = data;
+  if (!email || !username) {
+    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  }
+
+  const conn = await pool.getConnection();
   try {
-    const { username, email, password_hash, auth_provider, display_name } =
-      await request.json();
-    console.log("[SERVER] POST /api/register-user", { email, auth_provider });
+    const hashedPassword = password_hash.startsWith("$2b$")
+      ? password_hash
+      : await bcrypt.hash(password_hash, 10);
 
-    conn = await pool.getConnection();
-    //check for existing user
-    const [[exists]] = await conn.query(
-      "SELECT user_id FROM `User` WHERE email = ?",
-      [email]
-    );
-    if (exists)
-      return NextResponse.json({
-        success: true,
-        message: "Already registered",
-      });
-
-    await conn.beginTransaction();
-
-    //insert user
-    const [result] = await conn.query(
-      `INSERT INTO \`User\`
-        (username, email, password_hash, auth_provider, display_name, last_active)
-       VALUES (?, ?, ?, ?, ?, NOW())`,
-      [
-        username || email,
-        email,
-        auth_provider === "email" ? password_hash : null,
-        auth_provider,
-        display_name || username || email.split("@")[0],
-      ]
-    );
-    console.log("[SERVER] INSERT ID:", result.insertId);
-
-    await conn.query(
-      `INSERT INTO User_role
-         (user_id, role_id)
-       VALUES (?, (SELECT role_id FROM Role WHERE name = 'regular'))`,
-      [result.insertId]
+    const [res] = await conn.execute(
+      `INSERT INTO User (username, email, password_hash)
+       VALUES (?, ?, ?)
+       ON DUPLICATE KEY UPDATE email=email`, // Avoid inserting duplicates
+      [username, email, hashedPassword]
     );
 
-    await conn.commit();
-    console.log("[SERVER] Registration successful for:", email);
-
-    return NextResponse.json({ success: true, userId: result.insertId });
+    return NextResponse.json({ success: true, user_id: res.insertId });
   } catch (err) {
-    if (conn) await conn.rollback().catch(() => {});
-    console.error("[SERVER] Registration error:", err);
-    return NextResponse.json(
-      { success: false, error: err.message },
-      { status: 500 }
-    );
+    console.error("Register error:", err);
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   } finally {
-    if (conn) conn.release();
+    conn.release();
   }
 }

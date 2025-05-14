@@ -278,7 +278,7 @@ export default function ProfilePage() {
                 alt={user.displayName || "User"}
               />
               <Typography variant="h6">
-                {user.displayName ?? "Unnamed User"}
+           x     {user.displayName ?? "Unnamed User"}
               </Typography>
               <Typography variant="body2">{user.primaryEmail}</Typography>
             </Box>

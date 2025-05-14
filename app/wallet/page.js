@@ -62,7 +62,7 @@ export default function WalletPage() {
         Wallet
       </Typography>
 
-      {/* Balance card */}
+      {/* Balance card */}x
       <Paper elevation={3} sx={{ p: 3, mb: 4, textAlign: "center" }}>
         {isLoading ? (
           <Skeleton variant="text" width={120} height={40} />

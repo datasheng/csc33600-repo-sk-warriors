@@ -1,4 +1,4 @@
-// File: app/admin/dashboard/page.jsx
+
 "use client";
 
 import useSWR from "swr";
@@ -30,7 +30,7 @@ export default function AdminDashboard() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-user-id": "1", // replace with real admin ID
+        "x-user-id": "1", 
       },
       body: JSON.stringify({ action }),
     });
