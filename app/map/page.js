@@ -31,7 +31,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import AddIcon from "@mui/icons-material/Add";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
 
 const libraries = ["places"];
 
@@ -171,15 +171,15 @@ export default function MapPage() {
   };
 
   const actions = [
-    { 
-      icon: <HomeIcon />, 
-      name: "Home", 
-      onClick: () => router.push("/") 
+    {
+      icon: <HomeIcon />,
+      name: "Home",
+      onClick: () => router.push("/"),
     },
     {
-      icon: <AccountBoxIcon/>,
+      icon: <AccountBoxIcon />,
       name: "Profile",
-      onClick: () => router.push("/profile")
+      onClick: () => router.push("/profile"),
     },
     {
       icon: <LocalOfferIcon />,
@@ -334,7 +334,15 @@ export default function MapPage() {
               onClick={handleOpenReviewDialog}
               sx={{ flex: 1 }}
             >
-              Leave a Review
+              Review me
+            </Button>
+
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ flex: 1 }}
+            >
+              Favorite
             </Button>
 
             <Button
@@ -347,7 +355,6 @@ export default function MapPage() {
           </Box>
         </Box>
       )}
-
 
       {/*this is the section that actually shows the map + the user location and marker*/}
       {/* Map */}
@@ -386,7 +393,6 @@ export default function MapPage() {
           })}
         </GoogleMap>
       </Box>
-
 
       {/* Review Dialog - Modal panel with correct styling and centering */}
       <Box
@@ -429,7 +435,6 @@ export default function MapPage() {
             </Typography>
           </Box>
 
-
           {/* Content area */}
           <Box sx={{ p: 4, bgcolor: "#1c1c1c" }}>
             {/* Rating section */}
@@ -455,7 +460,6 @@ export default function MapPage() {
                 />
               </Box>
             </Box>
-
 
             {/* Comment field */}
             <Box
@@ -500,7 +504,6 @@ export default function MapPage() {
                 }}
               />
             </Box>
-
 
             {/* Buttons */}
             <Box
@@ -554,7 +557,6 @@ export default function MapPage() {
         </Box>
       </Box>
 
-
       {/* Success Snackbar */}
       <Snackbar
         open={reviewSubmitted}
@@ -567,7 +569,6 @@ export default function MapPage() {
         </Alert>
       </Snackbar>
 
-
       {/* Error Snackbar */}
       <Snackbar
         open={showError}
@@ -579,7 +580,6 @@ export default function MapPage() {
           {errorMessage}
         </Alert>
       </Snackbar>
-
 
       {/*this is the new appbar, its basically using mui speed dial component.*/}
       <Box sx={{ position: "fixed", bottom: 16, right: 16, zIndex: 1400 }}>
