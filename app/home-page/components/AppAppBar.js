@@ -75,6 +75,14 @@ export default function AppAppBar() {
                   About Us
                 </Button>
               </Link>
+              
+              {user && (
+                 <Link href="/map">
+                  <Button variant="text" color="info" size="small">
+                     Map
+                     </Button>
+                     </Link>
+                     )}
 
               <Link href="/chatbot">
                 <Button variant="text" color="info" size="small">
@@ -179,6 +187,20 @@ export default function AppAppBar() {
                 >
                   <MenuItem>About Us</MenuItem>
                 </Link>
+                
+
+                {user && (
+                  <Link
+                    href="/map"
+                    style={{ textDecoration: "none", color: "#fff" }}
+                  >
+                    <MenuItem>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        Map
+                      </Box>
+                    </MenuItem>
+                  </Link>
+                )}
 
                 <Link
                   href="/chatbot"
