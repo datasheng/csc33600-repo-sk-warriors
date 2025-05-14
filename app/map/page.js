@@ -314,14 +314,6 @@ export default function MapPage() {
             </Typography>
           )}
 
-          <Box mt={2} mb={2}>
-            <img
-              src="/placeholder-image.jpg"
-              alt="Deli"
-              style={{ width: "100%", borderRadius: "8px" }}
-            />
-          </Box>
-
           <Typography variant="body2" sx={{ mb: 2 }}>
             <strong>Special Deals:</strong> Coming soon!
           </Typography>
