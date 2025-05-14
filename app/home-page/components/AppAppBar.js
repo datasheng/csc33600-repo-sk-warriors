@@ -95,55 +95,42 @@ export default function AppAppBar() {
             <Sitemark />
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
               <Link href="/">
-                <Button variant="text" color="info" size="small">
-                  Home
-                </Button>
+                <Button variant="text" color="info" size="small">Home</Button>
               </Link>
               <Link href="/about-us">
-                <Button variant="text" color="info" size="small">
-                  About Us
-                </Button>
+                <Button variant="text" color="info" size="small">About Us</Button>
               </Link>
               {user && (
                 <Link href="/map">
-                  <Button variant="text" color="info" size="small">
-                    Map
-                  </Button>
+                  <Button variant="text" color="info" size="small">Map</Button>
                 </Link>
               )}
               {(plan === "plus" || plan === "business") && (
                 <Link href="/all-delis">
-                  <Button variant="text" color="info" size="small">
-                    All Delis
-                  </Button>
+                  <Button variant="text" color="info" size="small">All Delis</Button>
+                </Link>
+              )}
+              {plan === "business" && (
+                <Link href="/advertising">
+                  <Button variant="text" color="info" size="small">Advertising</Button>
                 </Link>
               )}
               {isAdmin && (
                 <Link href="/admin/dashboard">
-                  <Button variant="text" color="warning" size="small">
-                    Admin
-                  </Button>
+                  <Button variant="text" color="warning" size="small">Admin</Button>
                 </Link>
               )}
               <Link href="/chatbot">
-                <Button variant="text" color="info" size="small">
-                  ChronicleAI
-                </Button>
+                <Button variant="text" color="info" size="small">ChronicleAI</Button>
               </Link>
               <Link href="https://mintlify.com/" target="_blank">
-                <Button variant="text" color="info" size="small">
-                  Documentation
-                </Button>
+                <Button variant="text" color="info" size="small">Documentation</Button>
               </Link>
               <Link href="/pricing">
-                <Button variant="text" color="info" size="small">
-                  Pricing
-                </Button>
+                <Button variant="text" color="info" size="small">Pricing</Button>
               </Link>
               <Link href="/contact">
-                <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
-                  Contact
-                </Button>
+                <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>Contact</Button>
               </Link>
             </Box>
           </Box>
@@ -169,14 +156,10 @@ export default function AppAppBar() {
             ) : (
               <>
                 <Link href="/sign-in">
-                  <Button color="primary" variant="text" size="small">
-                    Sign in
-                  </Button>
+                  <Button color="primary" variant="text" size="small">Sign in</Button>
                 </Link>
                 <Link href="/sign-up">
-                  <Button color="primary" variant="contained" size="small">
-                    Sign up
-                  </Button>
+                  <Button color="primary" variant="contained" size="small">Sign up</Button>
                 </Link>
               </>
             )}
@@ -208,6 +191,11 @@ export default function AppAppBar() {
                 {(plan === "plus" || plan === "business") && (
                   <Link href="/all-delis" style={{ textDecoration: "none", color: "#fff" }}>
                     <MenuItem>All Delis</MenuItem>
+                  </Link>
+                )}
+                {plan === "business" && (
+                  <Link href="/advertising" style={{ textDecoration: "none", color: "#fff" }}>
+                    <MenuItem>Advertising</MenuItem>
                   </Link>
                 )}
                 {isAdmin && (
@@ -250,16 +238,12 @@ export default function AppAppBar() {
                   <>
                     <Link href="/sign-up">
                       <MenuItem>
-                        <Button color="primary" variant="contained" fullWidth>
-                          Sign up
-                        </Button>
+                        <Button color="primary" variant="contained" fullWidth>Sign up</Button>
                       </MenuItem>
                     </Link>
                     <Link href="/sign-in">
                       <MenuItem>
-                        <Button color="primary" variant="outlined" fullWidth>
-                          Sign in
-                        </Button>
+                        <Button color="primary" variant="outlined" fullWidth>Sign in</Button>
                       </MenuItem>
                     </Link>
                   </>

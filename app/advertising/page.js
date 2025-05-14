@@ -17,8 +17,8 @@ import {
 } from "@mui/material";
 
 const fetcher = (url) => fetch(url).then((r) => r.json());
-const demoUserId = "1"; //Need to replace
-//potentially send link to admin then admin is the one who puts up the ad.
+const demoUserId = "1"; 
+
 
 export default function AdsDashboard() {
  
