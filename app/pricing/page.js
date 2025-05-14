@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -13,37 +14,46 @@ import {
   Grid,
   Snackbar,
 } from "@mui/material";
-import AppAppBar from "../home-page/components/AppAppBar";
-import Footer from "../home-page/components/Footer";
-import AppTheme from "../shared-theme/AppTheme";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import StarIcon from "@mui/icons-material/Star";
-import StorefrontIcon from "@mui/icons-material/Storefront";
-import PersonIcon from "@mui/icons-material/Person";
+import {
+  CheckCircleRounded as CheckIcon,
+  AutoAwesome as SparkleIcon,
+  Star as StarIcon,
+  Storefront as StoreIcon,
+  Person as PersonIcon,
+} from "@mui/icons-material";
 import Link from "next/link";
 import { useUser } from "@stackframe/stack";
-import { useState } from "react";
+
+import AppTheme from "../shared-theme/AppTheme";
+import AppAppBar from "../home-page/components/AppAppBar";
+import Footer from "../home-page/components/Footer";
+
+import { getSqlUserId } from "@/lib/sqlUserId";
 
 /* ────────────────────────────────────────────────────────────── */
 /* PricingCard component                                          */
-function PricingCard({ tier, user, onSubscribe, busyPlan }) {
-  const isBusy = busyPlan === tier.plan;
+function PricingCard({ tier, user, busyPlan, currentPlan, onSubscribe }) {
+  const isCurrent = currentPlan === tier.plan;
+  const isBusy    = busyPlan === tier.plan;
 
+  /* button config */
   const buttonProps = user
     ? {
-        onClick: () => onSubscribe(tier.plan),
-        disabled: isBusy,
+        disabled: isCurrent || isBusy,
+        onClick : () => onSubscribe(tier.plan),
       }
     : {
         component: Link,
-        href: tier.link,
+        href     : tier.link,
       };
 
+  /* button label */
   const buttonLabel = user
-    ? isBusy
+    ? isCurrent
+      ? `You’re on ${tier.title}`
+      : isBusy
       ? "Processing…"
-      : tier.authButtonText
+      : `Subscribe to ${tier.title}`
     : tier.buttonText;
 
   return (
@@ -65,6 +75,7 @@ function PricingCard({ tier, user, onSubscribe, busyPlan }) {
     >
       <CardContent>
         <Box sx={{ textAlign: "center", mb: 2 }}>{tier.icon}</Box>
+
         <Box
           sx={{
             mb: 1,
@@ -79,13 +90,14 @@ function PricingCard({ tier, user, onSubscribe, busyPlan }) {
           </Typography>
           {tier.subheader && (
             <Chip
-              icon={<AutoAwesomeIcon />}
+              icon={<SparkleIcon />}
               label={tier.subheader}
               color="primary"
               sx={{ fontWeight: "bold" }}
             />
           )}
         </Box>
+
         <Box sx={{ display: "flex", alignItems: "baseline" }}>
           <Typography component="h3" variant="h2">
             ${tier.price}
@@ -94,13 +106,15 @@ function PricingCard({ tier, user, onSubscribe, busyPlan }) {
             &nbsp; per month
           </Typography>
         </Box>
+
         <Divider sx={{ my: 2, opacity: 0.8, borderColor: "divider" }} />
-        {tier.description.map((line, index) => (
+
+        {tier.description.map((line, i) => (
           <Box
-            key={index}
+            key={i}
             sx={{ py: 1, display: "flex", gap: 1.5, alignItems: "center" }}
           >
-            <CheckCircleRoundedIcon sx={{ width: 20, color: "primary.main" }} />
+            <CheckIcon sx={{ width: 20, color: "primary.main" }} />
             <Typography variant="subtitle2" component="span">
               {line}
             </Typography>
@@ -125,23 +139,41 @@ function PricingCard({ tier, user, onSubscribe, busyPlan }) {
 /* ────────────────────────────────────────────────────────────── */
 
 export default function Pricing() {
-  const user = useUser();
+  const user = useUser();               // StackFrame user (may be null)
+  const sqlUserId = getSqlUserId();     // our MySQL user_id in localStorage
   const [busyPlan, setBusyPlan] = useState(null);
+  const [currentPlan, setCurrentPlan] = useState(null); // 'free' | 'plus' | 'business'
   const [toast, setToast] = useState("");
 
-  /* handle subscribe for signed‑in users */
+  /* ── fetch current plan on mount ─────────────────────────── */
+  useEffect(() => {
+    if (!sqlUserId) return;
+
+    fetch("/api/profile", { headers: { "x-user-id": sqlUserId } })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.plan?.name) {
+          setCurrentPlan(data.plan.name.toLowerCase());
+        } else {
+          setCurrentPlan("free");
+        }
+      })
+      .catch((err) => console.error("profile fetch failed:", err));
+  }, [sqlUserId]);
+
+  /* ── subscribe handler ───────────────────────────────────── */
   const handleSubscribe = async (plan) => {
     setBusyPlan(plan);
     try {
       const res = await fetch(`/api/subscribe/${plan}`, {
         method: "POST",
-        headers: { "x-user-id": user?.id ?? "" }, // fallback empty
+        headers: { "x-user-id": sqlUserId || "" },
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Subscription failed");
-      setToast(
-        `✅ You are now subscribed to the ${plan.charAt(0).toUpperCase() + plan.slice(1)} plan`
-      );
+
+      setCurrentPlan(plan);
+      setToast(`✅ You are now subscribed to ${plan.charAt(0).toUpperCase()+plan.slice(1)}`);
     } catch (err) {
       setToast("❌ " + err.message);
     } finally {
@@ -149,6 +181,7 @@ export default function Pricing() {
     }
   };
 
+  /* ── pricing tiers definition ────────────────────────────── */
   const tiers = [
     {
       title: "Free",
@@ -156,13 +189,12 @@ export default function Pricing() {
       price: "0",
       description: [
         "Free Account Setup",
-        "1 mile radius from users location",
+        "1 mile radius from your location",
         "Upload 15 pictures a month",
         "12 ratings a month",
         "Limited Ads",
       ],
       buttonText: "Sign up for free",
-      authButtonText: "You’re on Free",
       buttonVariant: "outlined",
       buttonColor: "primary",
       link: "/sign-up",
@@ -174,14 +206,13 @@ export default function Pricing() {
       subheader: "Recommended",
       price: "4",
       description: [
-        "10 mile radius view from your location",
+        "10 mile radius view",
         "Upload 30 pictures a month",
         "30 ratings a month",
         "Promotions from Delis",
         "No Ads",
       ],
       buttonText: "Start now",
-      authButtonText: "Subscribe to Plus",
       buttonVariant: "contained",
       buttonColor: "secondary",
       link: "/sign-up",
@@ -199,17 +230,18 @@ export default function Pricing() {
         "No Ads",
       ],
       buttonText: "Contact us",
-      authButtonText: "Subscribe to Business",
       buttonVariant: "outlined",
       buttonColor: "primary",
       link: "/contact",
-      icon: <StorefrontIcon sx={{ fontSize: 40, color: "primary.main" }} />,
+      icon: <StoreIcon sx={{ fontSize: 40, color: "primary.main" }} />,
     },
   ];
 
+  /* ── UI ──────────────────────────────────────────────────── */
   return (
     <AppTheme>
       <AppAppBar />
+
       <Container
         id="pricing"
         sx={{
@@ -240,15 +272,16 @@ export default function Pricing() {
               <PricingCard
                 tier={tier}
                 user={user}
-                onSubscribe={handleSubscribe}
                 busyPlan={busyPlan}
+                currentPlan={currentPlan}
+                onSubscribe={handleSubscribe}
               />
             </Grid>
           ))}
         </Grid>
       </Container>
 
-      {/* ✅ Toast Message */}
+      {/* Toast */}
       <Snackbar
         open={!!toast}
         autoHideDuration={4000}

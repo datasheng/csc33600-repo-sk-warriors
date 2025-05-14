@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { getSqlUserId } from "@/lib/sqlUserId";
 import { useUser, useStackApp } from "@stackframe/stack";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -45,30 +46,43 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    async function fetchUserStats() {
-      if (!user) return;
-
+    async function fetchUserProfile() {
+      const sqlUserId = getSqlUserId();
+      if (!sqlUserId) return;
+  
       try {
-        const response = await fetch("/api/user-stats", {
+        const response = await fetch("/api/profile", {
           headers: {
-            Authorization: `Bearer ${await user.getIdToken()}`,
+            "x-user-id": sqlUserId,
           },
         });
+  
+        if (!response.ok) {
+          throw new Error("Failed to fetch profile");
+        }
+  
         const data = await response.json();
-
-        setUserDetails((prev) => ({
-          ...prev,
-          favoriteSpots: data.favoritesCount || 0,
-          // If you have reviews count:
-          reviewsMade: data.reviewsCount || 0,
-        }));
-      } catch (error) {
-        console.error("Failed to fetch user stats:", error);
+  
+        setUserDetails({
+          name: data.user.username || "Unnamed User",
+          email: data.user.email,
+          membershipStatus: data.plan?.name || "Free",
+          favoriteSpots: data.stats?.favorites || 0,
+          reviewsMade: data.stats?.reviews || 0,
+          dateJoined: new Date(data.user.joined).toLocaleDateString(),
+        });
+  
+        if (user?.photoUrl) {
+          setProfilePhoto(user.photoUrl);
+        }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
       }
     }
-
-    fetchUserStats();
-  }, [user]);
+  
+    fetchUserProfile();
+  }, []);
+  
 
   const getMembershipColor = (status) => {
     switch (status.toLowerCase()) {
